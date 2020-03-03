@@ -11,7 +11,7 @@ import tools.pathfinder.PathFinder;
 
 import java.util.ArrayList;
 
-public class Agent extends AbstractPlayer {
+public class ReactivoCompuesto extends AbstractPlayer {
 
     //Objeto de clase Pathfinder
     private PathFinder pf;
@@ -33,7 +33,7 @@ public class Agent extends AbstractPlayer {
   	 * @param stateObs Observation of the current state.
        * @param elapsedTimer Timer when the action returned is due.
   	 */
-  	public Agent(StateObservation stateObs, ElapsedCpuTimer elapsedTimer){
+  	public ReactivoCompuesto(StateObservation stateObs, ElapsedCpuTimer elapsedTimer){
   		ArrayList<Integer> tiposObs = new ArrayList();
         ArrayList<Observation>[] obstaculos = stateObs.getImmovablePositions();
         for (ArrayList<Observation> obs : obstaculos) {
