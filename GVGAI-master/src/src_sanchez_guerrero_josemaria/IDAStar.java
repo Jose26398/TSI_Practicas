@@ -3,6 +3,8 @@ package src_sanchez_guerrero_josemaria;
 import java.util.ArrayList;
 import java.util.List;
 
+import tools.Vector2d;
+
 /**
  * An implementation of IDA* search to find an optimal path in a state space.
  */
@@ -10,6 +12,7 @@ public class IDAStar {
 
     private Node initialState;
     private Node goalState;
+    private ArrayList<Vector2d> tiposObs;
 
     /**
      * Creates an IDAStarSearch object with initial state, goal state, and a heuristic function.
@@ -18,9 +21,10 @@ public class IDAStar {
      * @param goalState         the state where the search ends
      * @param heuristicFunction the heuristic function used to score nodes
      */
-    public IDAStar(Node initialState, Node goalState) {
+    public IDAStar(Node initialState, Node goalState, ArrayList<Vector2d> tiposObs) {
         this.initialState = initialState;
         this.goalState = goalState;
+        this.tiposObs = tiposObs;
     }
 
     /**
@@ -75,8 +79,8 @@ public class IDAStar {
 
         // Set G, H, and F of Current Node
         Node currentNode = path.get(path.size() - 1);
-        currentNode.setH(Math.abs(this.goalState.getPosition().x-this.initialState.getPosition().x)
-				 	   + Math.abs(this.goalState.getPosition().y-this.initialState.getPosition().y));
+        currentNode.setH(Math.abs(this.goalState.getPosition().x-currentNode.getPosition().x)
+				 	   + Math.abs(this.goalState.getPosition().y-currentNode.getPosition().y));
         currentNode.setG(graphCost);
         currentNode.setF(graphCost + currentNode.getH());
 
@@ -91,7 +95,7 @@ public class IDAStar {
         // If This Stays Integer.MAX_VALUE Then All Paths Explored Were Smaller Than F Bound
         double minFFound = Double.MAX_VALUE;
 
-        List<Node> children = currentNode.getSuccessors();
+        List<Node> children = currentNode.getSuccessors(tiposObs);
         // Expand Search To Each Child Node
         for (Node child : children) {
 
@@ -125,7 +129,7 @@ public class IDAStar {
      * @param endPathNode the output node from search()
      * @return an list of nodes ordered to represent the optimal path
      */
-    public List<Node> getPath(Node endPathNode) {
+    public ArrayList<Node> getPath(Node endPathNode) {
         ArrayList<Node> path = new ArrayList<>();
         path.add(endPathNode);
 

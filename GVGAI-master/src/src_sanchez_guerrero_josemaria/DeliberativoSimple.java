@@ -6,8 +6,7 @@ import core.player.AbstractPlayer;
 import ontology.Types;
 import tools.ElapsedCpuTimer;
 import tools.Vector2d;
-import tools.pathfinder.Node;
-import tools.pathfinder.PathFinder;
+import src_sanchez_guerrero_josemaria.Node;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +14,7 @@ import java.util.List;
 public class DeliberativoSimple extends AbstractPlayer {
 
     //Objeto de clase Pathfinder
-    private PathFinder pf;
+    private IDAStar pf;
     private ArrayList<Node> path = new ArrayList<>();
     private Vector2d ultimaPos;
     
@@ -28,6 +27,7 @@ public class DeliberativoSimple extends AbstractPlayer {
 
   	Vector2d fescala;
   	Vector2d portal;
+    ArrayList<Vector2d> tiposObs = new ArrayList();
   	
   	/**
   	 * initialize all variables for the agent
@@ -49,19 +49,23 @@ public class DeliberativoSimple extends AbstractPlayer {
         //Ultima posición del avatar
         ultimaPos = new Vector2d(stateObs.getAvatarPosition().x / fescala.x, stateObs.getAvatarPosition().y / fescala.y);
         
-        ArrayList<Integer> tiposObs = new ArrayList();
         ArrayList<Observation>[] obstaculos = stateObs.getImmovablePositions();
-        for (ArrayList<Observation> obs : obstaculos) {
-            tiposObs.add(obs.get(0).obsID);
+        for (int i = 0; i < obstaculos[0].size(); i++) {
+        	Vector2d aux = obstaculos[0].get(i).position;
+            tiposObs.add( new Vector2d(Math.floor(aux.x / fescala.x), Math.floor(aux.y / fescala.y)) );
         }
-        tiposObs.add((int) 'o');
-
-        //Se inicializa el objeto del pathfinder con las ids de los obstaculos
-        pf = new IDAStar(ultimaPos, portal, tiposObs);
-        // TODO: constructor para aceptar coordenadas y los obstaculos del mapa.
 
         //Se lanza el algoritmo de pathfinding para poder ser usado en la función ACT
-        pf.run(stateObs);
+//        pf.search();
+      
+        //Se inicializa el objeto del pathfinder con las ids de los obstaculos
+        Node initialState = new Node(ultimaPos);
+        Node goalState = new Node(portal);
+        
+        //Calculamos un camino desde la posición del avatar a la posición del portal
+        pf = new IDAStar(initialState, goalState, tiposObs);
+        path = pf.getPath( pf.search() );
+        path.remove(0);
         
   	}
 
@@ -73,12 +77,15 @@ public class DeliberativoSimple extends AbstractPlayer {
         //System.out.println("Posición del avatar: " + avatar.toString());
         //System.out.println("Ultima posición: " + ultimaPos);
         //System.out.println("Ultima acción: " + ultimaAccion);
-
+        
+//        if (stateObs.getGameTick() == 5) {
+//        	path.clear();
+//        }
+        
         //Actualizamos el plan de ruta
         if (((avatar.x != ultimaPos.x) || (avatar.y != ultimaPos.y)) && !path.isEmpty()) {
             path.remove(0);
         }
-
         //Calculamos el numero de gemas que lleva encima
         int nGemas = 0;
         if (stateObs.getAvatarResources().isEmpty() != true) {
@@ -87,42 +94,18 @@ public class DeliberativoSimple extends AbstractPlayer {
 
         //Si no hay un plan de ruta calculado...
         if (path.isEmpty()) {
-            //Si ya tiene todas las gemas se calcula uno al portal más cercano. Si no se calcula a la gema más cercana
-            if (nGemas == 0) {
-                Vector2d portal;
-
-                //Se crea una lista de observaciones de portales, ordenada por cercania al avatar
-                ArrayList<Observation>[] posiciones = stateObs.getPortalsPositions(stateObs.getAvatarPosition());
-
-                //Se seleccionan el portal más cercano
-                portal = posiciones[0].get(0).position;
-
-                //Se le aplica el factor de escala para que las coordenas de pixel coincidan con las coordenadas del grig
-                portal.x = portal.x / fescala.x;
-                portal.y = portal.y / fescala.y;
-
-                //Calculamos un camino desde la posición del avatar a la posición del portal
-                path = pf.getPath(avatar, portal);
-            } else {
-                Vector2d gema;
-
-                //Se crea una lista de observaciones, ordenada por cercania al avatar
-                ArrayList<Observation>[] posiciones = stateObs.getResourcesPositions(stateObs.getAvatarPosition());
-
-                //Se selecciona la gema más cercana
-                gema = posiciones[0].get(0).position;
-
-                //Se le aplica el factor de escala para que las coordenas de pixel coincidan con las coordenadas del grig
-                gema.x = gema.x / fescala.x;
-                gema.y = gema.y / fescala.y;
-
-                //Calculamos un camino desde la posición del avatar a la posición de la gema
-                path = pf.getPath(avatar, gema);
-            }
+            //Se inicializa el objeto del pathfinder con las ids de los obstaculos
+            Node initialState = new Node(ultimaPos);
+            Node goalState = new Node(portal);
+            
+            //Calculamos un camino desde la posición del avatar a la posición del portal
+            pf = new IDAStar(initialState, goalState, tiposObs);
+            path = pf.getPath( pf.search() );            
         }
 
         if (path != null) {
             Types.ACTIONS siguienteAccion;
+          
             Node siguientePos = path.get(0);
 
             //Se determina el siguiente movimiento a partir de la posición del avatar
@@ -137,6 +120,8 @@ public class DeliberativoSimple extends AbstractPlayer {
             //Salida por defecto
             return Types.ACTIONS.ACTION_NIL;
         }
+        
+        
 
     }
 

@@ -1,5 +1,6 @@
 package src_sanchez_guerrero_josemaria;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -11,6 +12,11 @@ import tools.Vector2d;
  * @param <T> the type of the node's stored state
  */
 public class Node implements Comparable<Node> {
+	
+	Node(Vector2d position){
+		this.position = position;
+	}
+	
 
     /**
      * Node's h() heuristic value.
@@ -165,8 +171,31 @@ public class Node implements Comparable<Node> {
      *
      * @return list of successor nodes
      */
-    public List<Node> getSuccessors(){
-		if ()
+    public List<Node> getSuccessors(ArrayList<Vector2d> tiposObs){
+    	List<Node> successors = new ArrayList<Node>();
+    	Node top = new Node( new Vector2d(this.position.x, this.position.y-1) );
+    	top.setParent(this);
+    	Node bottom = new Node( new Vector2d(position.x, position.y+1) );
+    	bottom.setParent(this);
+    	Node left = new Node( new Vector2d(position.x-1, position.y) );
+    	left.setParent(this);
+    	Node right = new Node( new Vector2d(position.x+1, position.y) );
+    	right.setParent(this);
+    	
+    	if (!tiposObs.contains( top.position )) {
+    		successors.add(top);
+    	}
+    	if (!tiposObs.contains( bottom.position )) {
+    		successors.add(bottom);
+    	}
+    	if (!tiposObs.contains( left.position )) {
+    		successors.add(left);
+    	}
+    	if (!tiposObs.contains( right.position )) {
+    		successors.add(right);
+    	}
+    	
+    	return successors;
     }
     
     /**
@@ -175,6 +204,6 @@ public class Node implements Comparable<Node> {
      * @return returns distance to node's parent
      */
     public double distFromParent() {
-    	
+    	return 1;
     }
 }
