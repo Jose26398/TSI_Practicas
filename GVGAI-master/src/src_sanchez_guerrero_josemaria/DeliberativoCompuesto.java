@@ -30,7 +30,7 @@ public class DeliberativoCompuesto extends AbstractPlayer {
        * @param elapsedTimer Timer when the action returned is due.
   	 */
   	public DeliberativoCompuesto(StateObservation stateObs, ElapsedCpuTimer elapsedTimer){
-  	//Calculamos el factor de escala entre mundos (pixeles -> grid)
+  		//Calculamos el factor de escala entre mundos (pixeles -> grid)
         fescala = new Vector2d(stateObs.getWorldDimension().width / stateObs.getObservationGrid().length , 
         		  stateObs.getWorldDimension().height / stateObs.getObservationGrid()[0].length);      
         
@@ -117,22 +117,6 @@ public class DeliberativoCompuesto extends AbstractPlayer {
 
     }
 
-    private void simularAcciones(StateObservation stateObs) {
-        //Obtenemos la lista de acciones disponible
-        ArrayList<Types.ACTIONS> acciones = stateObs.getAvailableActions();
-
-        //Guardamos la informaci�n sobre el estado inicial
-        StateObservation viejoEstado = stateObs;
-
-        for (Types.ACTIONS accion : acciones) {
-            //Avanzamos el estado tras aplicarle una acci�n
-            viejoEstado.advance(accion);
-
-            //viejoEstado.somethingsomething(parametros);  <- Hacemos lo que queramos con el estado avanzado
-            //Restauramos el estado para avanzarlo con otra de las acciones disponibles.
-            viejoEstado = stateObs;
-        }
-    }
 
     private Types.ACTIONS sigMovimiento(Node siguientePos, Vector2d avatar) {
         Types.ACTIONS siguienteAccion;

@@ -28,6 +28,8 @@ public class Test {
 		String pathfinderAstar = "src_sanchez_guerrero_josemaria.Agent";
 		String deliberativoSimple = "src_sanchez_guerrero_josemaria.DeliberativoSimple";
 		String deliberativoCompuesto = "src_sanchez_guerrero_josemaria.DeliberativoCompuesto";
+		String reactivoSimple = "src_sanchez_guerrero_josemaria.ReactivoSimple";
+		String reactivoCompuesto = "src_sanchez_guerrero_josemaria.ReactivoCompuesto";
 
 		//Load available games
 		String spGamesCollection =  "examples/all_games_sp.csv";
@@ -39,7 +41,7 @@ public class Test {
 
 		// Game and level to play
 		int gameIdx = 11;
-		int levelIdx = 6; // level names from 0 to 4 (game_lvlN.txt).
+		int levelIdx = 8; // level names from 0 to 4 (game_lvlN.txt).
 		String gameName = games[gameIdx][1];
 		String game = games[gameIdx][0];
 		String level1 = game.replace(gameName, gameName + "_lvl" + levelIdx);
@@ -54,7 +56,7 @@ public class Test {
 
 		// 2. This plays a game in a level by the controller.
 
-		ArcadeMachine.runOneGame(game, level1, visuals, deliberativoCompuesto, recordActionsFile, seed, 0);
+		ArcadeMachine.runOneGame(game, level1, visuals, reactivoCompuesto, recordActionsFile, seed, 0);
 		
 //        System.out.println("final " + end + "\n");
 
