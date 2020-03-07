@@ -5,130 +5,110 @@ import java.util.List;
 
 import tools.Vector2d;
 
-/**
- * An implementation of IDA* search to find an optimal path in a state space.
- */
+
 public class IDAStar {
 
+	// Creamos las variables para los nodos
     private Node initialState;
     private Node goalState;
     private ArrayList<Vector2d> tiposObs;
 
-    /**
-     * Creates an IDAStarSearch object with initial state, goal state, and a heuristic function.
-     *
-     * @param initialState      the state where the search begins
-     * @param goalState         the state where the search ends
-     * @param heuristicFunction the heuristic function used to score nodes
-     */
+
     public IDAStar(Node initialState, Node goalState, ArrayList<Vector2d> tiposObs) {
         this.initialState = initialState;
         this.goalState = goalState;
         this.tiposObs = tiposObs;
     }
 
-    /**
-     * Begins the IDA* search. Will return null if the goal node cannot be found. Returns a AbstractAStarNode that
-     * is the last node on the optimal path. You can traverse the optimal path by following each nodes parent
-     * until you arrive back to the initial node(parent is null).
-     *
-     * @return null if path does not exist, otherwise the last node on the optimal path
-     */
+    
     public Node search() {
 
-        // Find Initial F Bound
+        // Encontrar cota de F inicial
         double currentFBound = Math.abs(this.goalState.getPosition().x-this.initialState.getPosition().x)
         					 + Math.abs(this.goalState.getPosition().y-this.initialState.getPosition().y);
 
-        // Set Root of Path To Initial Node
+        // Creamos el path y aniadimos la posicion inicial
         ArrayList<Node> path = new ArrayList<>();
         path.add(0, this.initialState);
 
-        // Keep Retrying With Larger F Bound Until One Of The Follow:
-        // 0 Is Returned     - The Goal Node Is Found So Path Contains Optimal Path
-        // Integer.MAX_Value - No Node Was Found With A F Higher Than F Boundary So Goal Node Does Not Exist
+        // Repetimos el bucle con un nuevo F más grande hasta que:
+        // - Se devuelve 0, es decir, hemos encontrado la ruta mas optima
+        // - Double.MAX_Value - No se encontro ningun con una F mayor que el F limite, es decir, no hay solucion
         double smallestNewFBound;
+        
         do {
-            // Start Search
-            smallestNewFBound = recur_search(path, 0, currentFBound);
+            // Comienzo de la busqueda recursiva
+            smallestNewFBound = recursive_search(path, 0, currentFBound);
 
-            // Check If Goal Node Was Found
+            // Comprobamos si hemos llegado al final
             if (smallestNewFBound == 0.0)
                 return path.get(path.size() - 1);
 
-            // Set New F Boundary
+            // Si no hemos llegado establecemos una nueva cota para F
             currentFBound = smallestNewFBound;
         } while (currentFBound != Double.MAX_VALUE);
 
         return null;
     }
 
-    /**
-     * Recursively searches down the children of nodes. Will prevent itself from search down path with higher f than
-     * current f boundary. If paths with higher f boundary are found then it will return the smallest f over the
-     * boundary found. This smallest f over f boundary is a potential new f boundary during the next iteration. Will
-     * return 0 if goal node is found and Integer.MAX_VALUE if there is not a single path with a f greater than the
-     * f boundary, meaning the goal node cannot be found.
-     *
-     * @param path          list of nodes ordered by the order they were visited
-     * @param graphCost     current graph cost to get to the current node
-     * @param currentFBound the max f boundary for current iteration
-     * @return the smallest f value in the iteration that was greater than the fBoundary for the iteration
-     */
-    private double recur_search(ArrayList<Node> path, double graphCost, double currentFBound) {
+    
+    private double recursive_search(ArrayList<Node> path, double graphCost, double currentFBound) {
 
-        // Set G, H, and F of Current Node
+        // Establece las G, H, y F del nodo actual
         Node currentNode = path.get(path.size() - 1);
         currentNode.setH(Math.abs(this.goalState.getPosition().x-currentNode.getPosition().x)
 				 	   + Math.abs(this.goalState.getPosition().y-currentNode.getPosition().y));
         currentNode.setG(graphCost);
         currentNode.setF(graphCost + currentNode.getH());
 
-        // Current Node Has F Larger Than Current Bound
+        // Si el nodo actual tiene una F mayor que la cota actual
         if (currentNode.getF() > currentFBound)
             return currentNode.getF();
 
-        // Found The Goal Node -> Send Signal To End Recursion
+        // Comprueba si el nodo actual es igual que el nodo objetivo
         if (currentNode.equals(this.goalState))
             return 0;
 
-        // If This Stays Integer.MAX_VALUE Then All Paths Explored Were Smaller Than F Bound
+        // Inicializamos el valor minimo de F encontrado
         double minFFound = Double.MAX_VALUE;
 
         List<Node> children = currentNode.getSuccessors(tiposObs);
-        // Expand Search To Each Child Node
+        // Expandimos el nodo actual en cada uno de sus hijo
         for (Node child : children) {
 
-            // Verify Child Node Is Not Already On The Current Search Path
+            // Comprobamos que no estan ya en el path
             if (!path.contains(child)) {
 
-                // Add Child Tp Path And Then Continue Search Down The Path
+                // Aniadimos el hijo al path
                 path.add(child);
-                double minFOverBound = recur_search(path, currentNode.getG() + child.distFromParent(), currentFBound);
+                double minFOverBound;
+                // Y continuamos la busqueda recursiva, aumentando la G en 1 (en nuestro caso)
+                if (currentNode.getParent() != null &&
+                	currentNode.parent.getPosition().x != child.getPosition().x &&
+                	currentNode.parent.getPosition().y != child.getPosition().y) {
+                	minFOverBound = recursive_search(path, currentNode.getG() + child.distFromParent()+1, currentFBound);
+                }
+                else {                	
+                	minFOverBound = recursive_search(path, currentNode.getG() + child.distFromParent(), currentFBound);
+                }
 
-                // Signals To End Recursion When Goal Is Found
+                // Terminamos si hemos encontrado el nodo objetivo
                 if (minFOverBound == 0.0)
                     return 0.0;
 
-                // Keep Track Of The Smallest F Found Over Bound Generated By Each Child's Search Path
+                // Guardamos el valor de la F mas pequenia encontrada entre todas las cotas de los hijos generados
                 if (minFOverBound < minFFound)
                     minFFound = minFOverBound;
 
-                // Remove Child From Search Path Before Exploring Next Child
+                // Eliminamos al hijo del path antes de explorar el siguiente
                 path.remove(path.size() - 1);
             }
         }
 
         return minFFound;
     }
-
-    /**
-     * Takes the output from search() and makes it into a list of states that represent the optimal path from the
-     * initial state to the goal state.
-     *
-     * @param endPathNode the output node from search()
-     * @return an list of nodes ordered to represent the optimal path
-     */
+    
+    // Devolvemos el path completo para que pueda ser leido por nuestro agente
     public ArrayList<Node> getPath(Node endPathNode) {
         ArrayList<Node> path = new ArrayList<>();
         path.add(endPathNode);

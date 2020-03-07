@@ -6,6 +6,7 @@ import core.player.AbstractPlayer;
 import ontology.Types;
 import tools.ElapsedCpuTimer;
 import tools.Vector2d;
+import tools.pathfinder.PathFinder;
 import src_sanchez_guerrero_josemaria.Node;
 
 import java.util.ArrayList;
@@ -18,8 +19,8 @@ public class DeliberativoSimple extends AbstractPlayer {
     private ArrayList<Node> path = new ArrayList<>();
     private Vector2d ultimaPos;
     
-    
-    
+    long start;
+    long end;    
     
   //Greedy Camel: 
   	// 1) Busca la puerta mas cercana. 
@@ -46,7 +47,7 @@ public class DeliberativoSimple extends AbstractPlayer {
         portal.x = Math.floor(portal.x / fescala.x);
         portal.y = Math.floor(portal.y / fescala.y);
 
-        //Ultima posición del avatar
+        //Ultima posicion del avatar
         ultimaPos = new Vector2d(stateObs.getAvatarPosition().x / fescala.x, stateObs.getAvatarPosition().y / fescala.y);
         
         ArrayList<Observation>[] obstaculos = stateObs.getImmovablePositions();
@@ -55,30 +56,25 @@ public class DeliberativoSimple extends AbstractPlayer {
             tiposObs.add( new Vector2d(Math.floor(aux.x / fescala.x), Math.floor(aux.y / fescala.y)) );
         }
 
-        //Se lanza el algoritmo de pathfinding para poder ser usado en la función ACT
-//        pf.search();
-      
         //Se inicializa el objeto del pathfinder con las ids de los obstaculos
         Node initialState = new Node(ultimaPos);
         Node goalState = new Node(portal);
         
-        //Calculamos un camino desde la posición del avatar a la posición del portal
+        //Calculamos un camino desde la posicion del avatar a la posicion del portal
         pf = new IDAStar(initialState, goalState, tiposObs);
         path = pf.getPath( pf.search() );
         path.remove(0);
-        
   	}
 
     
     @Override
     public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
+    	start = System.currentTimeMillis();
+
         //Obtenemos la posicion del avatar
         Vector2d avatar = new Vector2d(stateObs.getAvatarPosition().x / fescala.x, stateObs.getAvatarPosition().y / fescala.y);
-        //System.out.println("Posición del avatar: " + avatar.toString());
-        //System.out.println("Ultima posición: " + ultimaPos);
-        //System.out.println("Ultima acción: " + ultimaAccion);
         
-//        if (stateObs.getGameTick() == 5) {
+//        if (stateObs.getGameTick() == 4) {
 //        	path.clear();
 //        }
         
@@ -86,37 +82,26 @@ public class DeliberativoSimple extends AbstractPlayer {
         if (((avatar.x != ultimaPos.x) || (avatar.y != ultimaPos.y)) && !path.isEmpty()) {
             path.remove(0);
         }
-        //Calculamos el numero de gemas que lleva encima
-        int nGemas = 0;
-        if (stateObs.getAvatarResources().isEmpty() != true) {
-            nGemas = stateObs.getAvatarResources().get(6);
-        }
-
-        //Si no hay un plan de ruta calculado...
-        if (path.isEmpty()) {
-            //Se inicializa el objeto del pathfinder con las ids de los obstaculos
-            Node initialState = new Node(ultimaPos);
-            Node goalState = new Node(portal);
-            
-            //Calculamos un camino desde la posición del avatar a la posición del portal
-            pf = new IDAStar(initialState, goalState, tiposObs);
-            path = pf.getPath( pf.search() );            
-        }
 
         if (path != null) {
             Types.ACTIONS siguienteAccion;
           
             Node siguientePos = path.get(0);
 
-            //Se determina el siguiente movimiento a partir de la posición del avatar
+            //Se determina el siguiente movimiento a partir de la posicion del avatar
             siguienteAccion = sigMovimiento(siguientePos, avatar);
 
-            //Se actualiza la ultima posición del avatar
+            //Se actualiza la ultima posicion del avatar
             ultimaPos = avatar;
-
+            
+    		end = System.currentTimeMillis();
+    		System.out.println("tick: " + stateObs.getGameTick() + " -- milisegundos: " + (end-start));
             return siguienteAccion;
 
         } else {
+    		end = System.currentTimeMillis();
+            System.out.println("tick: " + stateObs.getGameTick() + " -- milisegundos: " + (end-start));
+            
             //Salida por defecto
             return Types.ACTIONS.ACTION_NIL;
         }
