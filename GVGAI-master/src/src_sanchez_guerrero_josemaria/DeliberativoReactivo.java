@@ -6,165 +6,143 @@ import core.player.AbstractPlayer;
 import ontology.Types;
 import tools.ElapsedCpuTimer;
 import tools.Vector2d;
-import tools.pathfinder.Node;
-import tools.pathfinder.PathFinder;
 
 import java.util.ArrayList;
 
 public class DeliberativoReactivo extends AbstractPlayer {
 
-    //Objeto de clase Pathfinder
-    private PathFinder pf;
+	//Objeto de clase Pathfinder
+    private IDAStar pf;
     private ArrayList<Node> path = new ArrayList<>();
     private Vector2d ultimaPos;
     
-    
-    
-    
-  //Greedy Camel: 
-  	// 1) Busca la puerta mas cercana. 
-  	// 2) Escoge la accion que minimiza la distancia del camello a la puerta.
+    Node initialState;
+    Node goalState;
 
   	Vector2d fescala;
+  	Vector2d gema;
   	Vector2d portal;
-  	
-  	/**
-  	 * initialize all variables for the agent
-  	 * @param stateObs Observation of the current state.
-       * @param elapsedTimer Timer when the action returned is due.
-  	 */
+  	ArrayList<Vector2d> tiposObs = new ArrayList();
+    
+
   	public DeliberativoReactivo(StateObservation stateObs, ElapsedCpuTimer elapsedTimer){
-  		ArrayList<Integer> tiposObs = new ArrayList();
-        ArrayList<Observation>[] obstaculos = stateObs.getImmovablePositions();
-        for (ArrayList<Observation> obs : obstaculos) {
-            tiposObs.add(obs.get(0).obsID);
-        }
-        tiposObs.add((int) 'o');
-
-        //Se inicializa el objeto del pathfinder con las ids de los obstaculos
-        pf = new PathFinder(tiposObs);
-        pf.VERBOSE = false; // <- Activa o desactiva el modo la impresión del log
-
-        //Se lanza el algoritmo de pathfinding para poder ser usado en la función ACT
-        pf.run(stateObs);
-        
   		//Calculamos el factor de escala entre mundos (pixeles -> grid)
-          fescala = new Vector2d(stateObs.getWorldDimension().width / stateObs.getObservationGrid().length , 
-          		stateObs.getWorldDimension().height / stateObs.getObservationGrid()[0].length);      
+        fescala = new Vector2d(stateObs.getWorldDimension().width / stateObs.getObservationGrid().length , 
+        		  stateObs.getWorldDimension().height / stateObs.getObservationGrid()[0].length);      
         
-          //Se crea una lista de observaciones de portales, ordenada por cercania al avatar
-          ArrayList<Observation>[] posiciones = stateObs.getPortalsPositions(stateObs.getAvatarPosition());
-          //Seleccionamos el portal mas proximo
-          portal = posiciones[0].get(0).position;
-          portal.x = Math.floor(portal.x / fescala.x);
-          portal.y = Math.floor(portal.y / fescala.y);
 
-          //Ultima posición del avatar
-          ultimaPos = new Vector2d(stateObs.getAvatarPosition().x / fescala.x, stateObs.getAvatarPosition().y / fescala.y);
+        //Ultima posicion del avatar
+        ultimaPos = new Vector2d(stateObs.getAvatarPosition().x / fescala.x, stateObs.getAvatarPosition().y / fescala.y);
+        initialState = new Node(ultimaPos);
+        
+        ArrayList<Observation>[] obstaculos = stateObs.getImmovablePositions();
+        for (int i = 0; i < obstaculos[0].size(); i++) {
+        	Vector2d aux = obstaculos[0].get(i).position;
+            tiposObs.add( new Vector2d(Math.floor(aux.x / fescala.x), Math.floor(aux.y / fescala.y)) );
+        }
+
+        ArrayList<Observation>[] posicionesGemas = stateObs.getResourcesPositions(stateObs.getAvatarPosition());
+
+        for (int i=0; i < posicionesGemas[0].size(); i++) {
+        	gema = posicionesGemas[0].get(i).position;
+        	gema.x = Math.floor(gema.x / fescala.x);
+        	gema.y = Math.floor(gema.y / fescala.y);
+
+        	//Se inicializa el objeto del pathfinder con las ids de los obstaculos
+        	goalState = new Node(gema);
+        	
+        	//Calculamos un camino desde la posicion del avatar a la posicion del portal
+            pf = new IDAStar(initialState, goalState, tiposObs);
+            ArrayList<Node> aux = pf.getPath( pf.search() );
+            aux.remove(0);
+            path.addAll(aux);
+
+            initialState = goalState;
+        }
+
+        
+        //Se crea una lista de observaciones de portales, ordenada por cercania al avatar
+        ArrayList<Observation>[] posicionPortal = stateObs.getPortalsPositions(stateObs.getAvatarPosition());
+        //Seleccionamos el portal mas proximo
+        portal = posicionPortal[0].get(0).position;
+        portal.x = Math.floor(portal.x / fescala.x);
+        portal.y = Math.floor(portal.y / fescala.y);
+        
+//        initialState = new Node(ultimaPos);
+    	goalState = new Node(portal);
+        
+        //Calculamos un camino desde la posicion del avatar a la posicion del portal
+    	pf = new IDAStar(initialState, goalState, tiposObs);
+        ArrayList<Node> aux = pf.getPath( pf.search() );
+        aux.remove(0);
+        path.addAll(aux);
+        
   	}
 
     
     @Override
     public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
-        //Obtenemos la posicion del avatar
-        Vector2d avatar = new Vector2d(stateObs.getAvatarPosition().x / fescala.x, stateObs.getAvatarPosition().y / fescala.y);
-        //System.out.println("Posición del avatar: " + avatar.toString());
-        //System.out.println("Ultima posición: " + ultimaPos);
-        //System.out.println("Ultima acción: " + ultimaAccion);
+    	double actualDistance = distManhattan( stateObs.getAvatarPosition(), stateObs.getNPCPositions()[0].get(0).position );
+    	for (int i = 1; i < stateObs.getNPCPositions()[0].size(); i++)
+    		actualDistance *= distManhattan( stateObs.getAvatarPosition(), stateObs.getNPCPositions()[0].get(i).position );    
 
-        //Actualizamos el plan de ruta
-        if (((avatar.x != ultimaPos.x) || (avatar.y != ultimaPos.y)) && !path.isEmpty()) {
-            path.remove(0);
-        }
+    	actualDistance = Math.pow(actualDistance, 1.0 / stateObs.getNPCPositions()[0].size());
+    	
+    	if (actualDistance/30 <= 6) { // wil die :(
+    		//Obtenemos la posicion del avatar
+            Vector2d avatar = new Vector2d(stateObs.getAvatarPosition().x / fescala.x, stateObs.getAvatarPosition().y / fescala.y);
 
-        //Calculamos el numero de gemas que lleva encima
-        int nGemas = 0;
-        if (stateObs.getAvatarResources().isEmpty() != true) {
-            nGemas = stateObs.getAvatarResources().get(6);
-        }
+            Types.ACTIONS siguienteAccion = sigMovimiento( simularAcciones(stateObs), stateObs.getAvatarPosition() );
 
-        //Si no hay un plan de ruta calculado...
-        if (path.isEmpty()) {
-            //Si ya tiene todas las gemas se calcula uno al portal más cercano. Si no se calcula a la gema más cercana
-            if (nGemas == 0) {
-                Vector2d portal;
-
-                //Se crea una lista de observaciones de portales, ordenada por cercania al avatar
-                ArrayList<Observation>[] posiciones = stateObs.getPortalsPositions(stateObs.getAvatarPosition());
-
-                //Se seleccionan el portal más cercano
-                portal = posiciones[0].get(0).position;
-
-                //Se le aplica el factor de escala para que las coordenas de pixel coincidan con las coordenadas del grig
-                portal.x = portal.x / fescala.x;
-                portal.y = portal.y / fescala.y;
-
-                //Calculamos un camino desde la posición del avatar a la posición del portal
-                path = pf.getPath(avatar, portal);
-            } else {
-                Vector2d gema;
-
-                //Se crea una lista de observaciones, ordenada por cercania al avatar
-                ArrayList<Observation>[] posiciones = stateObs.getResourcesPositions(stateObs.getAvatarPosition());
-
-                //Se selecciona la gema más cercana
-                gema = posiciones[0].get(0).position;
-
-                //Se le aplica el factor de escala para que las coordenas de pixel coincidan con las coordenadas del grig
-                gema.x = gema.x / fescala.x;
-                gema.y = gema.y / fescala.y;
-
-                //Calculamos un camino desde la posición del avatar a la posición de la gema
-                path = pf.getPath(avatar, gema);
-            }
-        }
-
-        if (path != null) {
-            Types.ACTIONS siguienteAccion;
-            Node siguientePos = path.get(0);
-
-            //Se determina el siguiente movimiento a partir de la posición del avatar
-            siguienteAccion = sigMovimiento(siguientePos, avatar);
-
-            //Se actualiza la ultima posición del avatar
+            //Se actualiza la ultima posiciï¿½n del avatar
             ultimaPos = avatar;
+            
+            path.clear();
 
-            return siguienteAccion;
-
-        } else {
-            //Salida por defecto
-            return Types.ACTIONS.ACTION_NIL;
-        }
+            return siguienteAccion; 		
+    	}
+    	
+    	else {
+    		//Obtenemos la posicion del avatar
+    		Vector2d avatar = new Vector2d(stateObs.getAvatarPosition().x / fescala.x, stateObs.getAvatarPosition().y / fescala.y);
+    		
+    		//Actualizamos el plan de ruta
+    		if (((avatar.x != ultimaPos.x) || (avatar.y != ultimaPos.y)) && !path.isEmpty()) {
+    			path.remove(0);
+    		}
+    		
+    		if ( !path.isEmpty() ) {
+    			
+    		}
+			Types.ACTIONS siguienteAccion;
+			
+			Node siguientePos = path.get(0);
+			
+			//Se determina el siguiente movimiento a partir de la posicion del avatar
+			siguienteAccion = sigMovimiento(siguientePos.position, avatar);
+			
+			//Se actualiza la ultima posicion del avatar
+			ultimaPos = avatar;
+			
+			return siguienteAccion;
+    			
+    	}
 
     }
 
-    private void simularAcciones(StateObservation stateObs) {
-        //Obtenemos la lista de acciones disponible
-        ArrayList<Types.ACTIONS> acciones = stateObs.getAvailableActions();
-
-        //Guardamos la información sobre el estado inicial
-        StateObservation viejoEstado = stateObs;
-
-        for (Types.ACTIONS accion : acciones) {
-            //Avanzamos el estado tras aplicarle una acción
-            viejoEstado.advance(accion);
-
-            //viejoEstado.somethingsomething(parametros);  <- Hacemos lo que queramos con el estado avanzado
-            //Restauramos el estado para avanzarlo con otra de las acciones disponibles.
-            viejoEstado = stateObs;
-        }
-    }
-
-    private Types.ACTIONS sigMovimiento(Node siguientePos, Vector2d avatar) {
+    private Types.ACTIONS sigMovimiento(Vector2d siguientePos, Vector2d avatar) {
         Types.ACTIONS siguienteAccion;
-        if (siguientePos.position.x != avatar.x) {
-            if (siguientePos.position.x > avatar.x) {
+        if (siguientePos.x != avatar.x) {
+            if (siguientePos.x > avatar.x) {
                 siguienteAccion = Types.ACTIONS.ACTION_RIGHT;
             } else {
                 siguienteAccion = Types.ACTIONS.ACTION_LEFT;
             }
-        } else {
-            if (siguientePos.position.y > avatar.y) {
+        } else if (siguientePos.y == avatar.y){
+        	siguienteAccion = Types.ACTIONS.ACTION_NIL;
+        }
+        else {
+            if (siguientePos.y > avatar.y) {
                 siguienteAccion = Types.ACTIONS.ACTION_DOWN;
             } else {
                 siguienteAccion = Types.ACTIONS.ACTION_UP;
@@ -172,5 +150,52 @@ public class DeliberativoReactivo extends AbstractPlayer {
         }
         return siguienteAccion;
     }
+    
+    private Vector2d simularAcciones(StateObservation stateObs) {        
+        ArrayList<Vector2d> moves = new ArrayList<Vector2d>();
+        Vector2d top = new Vector2d(stateObs.getAvatarPosition().x, stateObs.getAvatarPosition().y-30);
+        Vector2d bottom = new Vector2d(stateObs.getAvatarPosition().x, stateObs.getAvatarPosition().y+30);
+        Vector2d left = new Vector2d(stateObs.getAvatarPosition().x-30, stateObs.getAvatarPosition().y);
+        Vector2d right = new Vector2d(stateObs.getAvatarPosition().x+30, stateObs.getAvatarPosition().y);
+        Vector2d idle = new Vector2d(stateObs.getAvatarPosition().x, stateObs.getAvatarPosition().y);
+        
+        if (!tiposObs.contains( top )) {
+    		moves.add(top);
+    	}
+    	if (!tiposObs.contains( bottom )) {
+    		moves.add(bottom);
+    	}
+    	if (!tiposObs.contains( left )) {
+    		moves.add(left);
+    	}
+    	if (!tiposObs.contains( right )) {
+    		moves.add(right);
+    	}
+    	moves.add(idle);
+        
+        //Guardamos la informaciï¿½n sobre el estado inicial
+        double bestDistance = 0;
+        Vector2d bestMove = null;
+                
+        for (Vector2d move : moves) {
+            
+        	double actualDistance = distManhattan( move, stateObs.getNPCPositions()[0].get(0).position );
+        	for (int i = 1; i < stateObs.getNPCPositions()[0].size(); i++)
+        		actualDistance *= distManhattan( move, stateObs.getNPCPositions()[0].get(i).position );    
+
+        	actualDistance = Math.pow(actualDistance, 1.0 / stateObs.getNPCPositions()[0].size()); 
+        	
+        	if (actualDistance > bestDistance) {
+        		bestDistance = actualDistance;
+        		bestMove = move;
+        	}
+            
+        }
+        return bestMove;
+    }
+    
+    public double distManhattan(Vector2d pos1, Vector2d pos2) {
+		return Math.abs(pos1.x-pos2.x) + Math.abs(pos1.y-pos2.y);
+	}
 
 }

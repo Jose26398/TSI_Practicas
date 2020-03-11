@@ -95,7 +95,7 @@ public class ReactivoCompuesto extends AbstractPlayer {
         	for (int i = 1; i < stateObs.getNPCPositions()[0].size(); i++)
         		actualDistance *= distManhattan( move, stateObs.getNPCPositions()[0].get(i).position );    
 
-        	actualDistance = Math.pow(actualDistance, 1.0 / stateObs.getNPCPositions()[0].size()); 
+        	actualDistance = Math.pow(actualDistance, 1.0 / stateObs.getNPCPositions()[0].size());
         	
         	if (actualDistance > bestDistance) {
         		bestDistance = actualDistance;
