@@ -12,8 +12,6 @@ import tools.pathfinder.PathFinder;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sun.glass.ui.CommonDialogs.Type;
-
 public class ReactivoCompuesto extends AbstractPlayer {
 
     private Vector2d ultimaPos;
@@ -55,7 +53,7 @@ public class ReactivoCompuesto extends AbstractPlayer {
 
         Types.ACTIONS siguienteAccion = sigMovimiento( simularAcciones(stateObs), stateObs.getAvatarPosition() );
 
-        //Se actualiza la ultima posición del avatar
+        //Se actualiza la ultima posiciï¿½n del avatar
         ultimaPos = avatar;
 
         return siguienteAccion;
@@ -85,7 +83,7 @@ public class ReactivoCompuesto extends AbstractPlayer {
     	}
     	moves.add(idle);
         
-        //Guardamos la información sobre el estado inicial
+        //Guardamos la informaciï¿½n sobre el estado inicial
         double bestDistance = 0;
         Vector2d bestMove = null;
                 

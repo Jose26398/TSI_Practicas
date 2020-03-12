@@ -88,7 +88,7 @@ public class DeliberativoReactivo extends AbstractPlayer {
 
     	actualDistance = Math.pow(actualDistance, 1.0 / stateObs.getNPCPositions()[0].size());
     	
-    	if (actualDistance/30 <= 6) { // wil die :(
+    	if (actualDistance/30 <= 3) {
     		//Obtenemos la posicion del avatar
             Vector2d avatar = new Vector2d(stateObs.getAvatarPosition().x / fescala.x, stateObs.getAvatarPosition().y / fescala.y);
 
@@ -111,8 +111,45 @@ public class DeliberativoReactivo extends AbstractPlayer {
     			path.remove(0);
     		}
     		
-    		if ( !path.isEmpty() ) {
-    			
+    		if ( path.isEmpty() ) {
+    			initialState = new Node(avatar);
+    			ArrayList<Observation>[] posicionesGemas = stateObs.getResourcesPositions(stateObs.getAvatarPosition());
+
+    			if (posicionesGemas != null) {
+	    	        for (int i=0; i < posicionesGemas[0].size(); i++) {
+	    	        	gema = posicionesGemas[0].get(i).position;
+	    	        	gema.x = Math.floor(gema.x / fescala.x);
+	    	        	gema.y = Math.floor(gema.y / fescala.y);
+	
+	    	        	//Se inicializa el objeto del pathfinder con las ids de los obstaculos
+	    	        	goalState = new Node(gema);
+	    	        	
+	    	        	//Calculamos un camino desde la posicion del avatar a la posicion del portal
+	    	            pf = new IDAStar(initialState, goalState, tiposObs);
+	    	            ArrayList<Node> aux = pf.getPath( pf.search() );
+	    	            aux.remove(0);
+	    	            path.addAll(aux);
+	
+	    	            initialState = goalState;
+	    	        }
+    			}
+
+    	        
+    	        //Se crea una lista de observaciones de portales, ordenada por cercania al avatar
+    	        ArrayList<Observation>[] posicionPortal = stateObs.getPortalsPositions(stateObs.getAvatarPosition());
+    	        //Seleccionamos el portal mas proximo
+    	        portal = posicionPortal[0].get(0).position;
+    	        portal.x = Math.floor(portal.x / fescala.x);
+    	        portal.y = Math.floor(portal.y / fescala.y);
+    	        
+//    	        initialState = new Node(ultimaPos);
+    	    	goalState = new Node(portal);
+    	        
+    	        //Calculamos un camino desde la posicion del avatar a la posicion del portal
+    	    	pf = new IDAStar(initialState, goalState, tiposObs);
+    	        ArrayList<Node> aux = pf.getPath( pf.search() );
+    	        aux.remove(0);
+    	        path.addAll(aux);
     		}
 			Types.ACTIONS siguienteAccion;
 			
