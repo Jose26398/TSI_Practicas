@@ -7,6 +7,7 @@ import ontology.Types;
 import tools.ElapsedCpuTimer;
 import tools.Vector2d;
 
+import java.util.Collections;
 import java.util.ArrayList;
 
 public class DeliberativoReactivo extends AbstractPlayer {
@@ -82,19 +83,27 @@ public class DeliberativoReactivo extends AbstractPlayer {
     
     @Override
     public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
-    	double actualDistance = distManhattan( stateObs.getAvatarPosition(), stateObs.getNPCPositions()[0].get(0).position );
-    	for (int i = 1; i < stateObs.getNPCPositions()[0].size(); i++)
-    		actualDistance *= distManhattan( stateObs.getAvatarPosition(), stateObs.getNPCPositions()[0].get(i).position );    
+    	Vector2d npcPosition = stateObs.getNPCPositions()[0].get(0).position;
+    	npcPosition.x = Math.floor(npcPosition.x / fescala.x);
+    	npcPosition.y = Math.floor(npcPosition.y / fescala.y);
+    	
+    	double actualDistance = distManhattan(ultimaPos, npcPosition);
+    	for (int i = 1; i < stateObs.getNPCPositions()[0].size(); i++) {
+    		npcPosition = stateObs.getNPCPositions()[0].get(0).position;
+        	npcPosition.x = Math.floor(npcPosition.x / fescala.x);
+        	npcPosition.y = Math.floor(npcPosition.y / fescala.y);
+        	actualDistance *= distManhattan(ultimaPos, npcPosition);    
+    	}
 
     	actualDistance = Math.pow(actualDistance, 1.0 / stateObs.getNPCPositions()[0].size());
     	
-    	if (actualDistance/30 <= 3) {
+    	if (actualDistance <= 6) {
     		//Obtenemos la posicion del avatar
             Vector2d avatar = new Vector2d(stateObs.getAvatarPosition().x / fescala.x, stateObs.getAvatarPosition().y / fescala.y);
 
-            Types.ACTIONS siguienteAccion = sigMovimiento( simularAcciones(stateObs), stateObs.getAvatarPosition() );
+            Types.ACTIONS siguienteAccion = sigMovimiento( simularAcciones(stateObs), avatar );
 
-            //Se actualiza la ultima posici�n del avatar
+            //Se actualiza la ultima posicion del avatar
             ultimaPos = avatar;
             
             path.clear();
@@ -114,6 +123,9 @@ public class DeliberativoReactivo extends AbstractPlayer {
     		if ( path.isEmpty() ) {
     			initialState = new Node(avatar);
     			ArrayList<Observation>[] posicionesGemas = stateObs.getResourcesPositions(stateObs.getAvatarPosition());
+    			if (posicionesGemas != null) {
+    				Collections.shuffle(posicionesGemas[0]);
+    			}
 
     			if (posicionesGemas != null) {
 	    	        for (int i=0; i < posicionesGemas[0].size(); i++) {
@@ -189,12 +201,26 @@ public class DeliberativoReactivo extends AbstractPlayer {
     }
     
     private Vector2d simularAcciones(StateObservation stateObs) {        
-        ArrayList<Vector2d> moves = new ArrayList<Vector2d>();
-        Vector2d top = new Vector2d(stateObs.getAvatarPosition().x, stateObs.getAvatarPosition().y-30);
-        Vector2d bottom = new Vector2d(stateObs.getAvatarPosition().x, stateObs.getAvatarPosition().y+30);
-        Vector2d left = new Vector2d(stateObs.getAvatarPosition().x-30, stateObs.getAvatarPosition().y);
-        Vector2d right = new Vector2d(stateObs.getAvatarPosition().x+30, stateObs.getAvatarPosition().y);
-        Vector2d idle = new Vector2d(stateObs.getAvatarPosition().x, stateObs.getAvatarPosition().y);
+    	ArrayList<Vector2d> moves = new ArrayList<Vector2d>();
+        Vector2d top = stateObs.getAvatarPosition();
+    	top.x = Math.floor(top.x / fescala.x);
+    	top.y = Math.floor(top.y / fescala.y)-1;
+    	
+        Vector2d bottom = stateObs.getAvatarPosition();
+        bottom.x = Math.floor(bottom.x / fescala.x);
+    	bottom.y = Math.floor(bottom.y / fescala.y)+1;
+    	
+        Vector2d left = stateObs.getAvatarPosition();
+        left.x = Math.floor(left.x / fescala.x)-1;
+    	left.y = Math.floor(left.y / fescala.y);
+    	
+        Vector2d right = stateObs.getAvatarPosition();
+        right.x = Math.floor(right.x / fescala.x)+1;
+    	right.y = Math.floor(right.y / fescala.y);
+    	
+        Vector2d idle = stateObs.getAvatarPosition();
+        idle.x = Math.floor(idle.x / fescala.x);
+    	idle.y = Math.floor(idle.y / fescala.y);
         
         if (!tiposObs.contains( top )) {
     		moves.add(top);
@@ -216,9 +242,18 @@ public class DeliberativoReactivo extends AbstractPlayer {
                 
         for (Vector2d move : moves) {
             
-        	double actualDistance = distManhattan( move, stateObs.getNPCPositions()[0].get(0).position );
-        	for (int i = 1; i < stateObs.getNPCPositions()[0].size(); i++)
-        		actualDistance *= distManhattan( move, stateObs.getNPCPositions()[0].get(i).position );    
+        	Vector2d npcPositions = stateObs.getNPCPositions()[0].get(0).position;
+        	npcPositions.x = Math.floor(npcPositions.x / fescala.x);
+        	npcPositions.y = Math.floor(npcPositions.y / fescala.y);
+        	double actualDistance = distManhattan( move, npcPositions );
+        	int i = 1;
+        	while( i < stateObs.getNPCPositions()[0].size() ) {
+        		npcPositions = stateObs.getNPCPositions()[0].get(i).position;
+	        	npcPositions.x = Math.floor(npcPositions.x / fescala.x);
+	        	npcPositions.y = Math.floor(npcPositions.y / fescala.y);
+        		actualDistance *= distManhattan( move, npcPositions );
+        		i++;
+        	} 
 
         	actualDistance = Math.pow(actualDistance, 1.0 / stateObs.getNPCPositions()[0].size()); 
         	
