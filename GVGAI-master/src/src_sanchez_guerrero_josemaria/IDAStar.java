@@ -13,7 +13,14 @@ public class IDAStar {
     private Node goalState;
     private ArrayList<Vector2d> tiposObs;
 
-
+    
+    /**
+     * Constructor a partir de un estado inicial, final, y las posiciones de los obstaculos.
+     *
+     * @param initialState      estado donde empieza la busqueda
+     * @param goalState         estado donde la busqueda termina
+     * @param tiposObs		   posiciones de los objetos no transitables del mapa
+     */
     public IDAStar(Node initialState, Node goalState, ArrayList<Vector2d> tiposObs) {
         this.initialState = initialState;
         this.goalState = goalState;
@@ -21,6 +28,13 @@ public class IDAStar {
     }
 
     
+    /**
+     * Comienza la busqueda IDA *. Devolvera nulo si no se puede encontrar el nodo objetivo.
+     * Devuelve un Node que es el ultimo nodo en la ruta optima. Puede recorrer la ruta optima
+     * siguiendo cada nodo principal hasta llegar al nodo inicial (el elemento primario es nulo).
+     * 
+     * @return null si la ruta no existe, de lo contrario, el ultimo nodo en la ruta optima
+     */
     public Node search() {
 
         // Encontrar cota de F inicial
@@ -52,6 +66,19 @@ public class IDAStar {
     }
 
     
+    /**
+     * Busca recursivamente los hijos de los nodos. Evitara buscar camino hacia abajo con una f mas
+     * alta que el limite f actual. Si se encuentran caminos con un limite f mas alto, devolvera la
+     * f mas pequenia sobre el limite encontrado. Este limite f sobre f mas pequenio es un nuevo
+     * limite f potencial durante la proxima iteracion. Devolvera 0 si se encuentra el nodo objetivo
+     * e Integer.MAX_VALUE si no hay una sola ruta con una f mayor que el limite f, lo que significa
+     * que no se puede encontrar el nodo objetivo.
+     *
+     * @param lista de rutas de nodos ordenados por el orden en que fueron visitados
+     * @param graphCost costo del gráfico actual para llegar al nodo actual
+     * @param currentFBound el límite máximo f para la iteración actual
+     * @return el valor f más pequeño en la iteración que fue mayor que el límite f para la iteración
+     */
     private double recursive_search(ArrayList<Node> path, double graphCost, double currentFBound) {
 
         // Establece las G, H, y F del nodo actual
@@ -84,8 +111,8 @@ public class IDAStar {
                 double minFOverBound;
                 // Y continuamos la busqueda recursiva, aumentando la G en 1 (en nuestro caso)
                 if (currentNode.getParent() != null &&
-                	currentNode.parent.getPosition().x != child.getPosition().x &&
-                	currentNode.parent.getPosition().y != child.getPosition().y) {
+                	currentNode.getParent().getPosition().x != child.getPosition().x &&
+                	currentNode.getParent().getPosition().y != child.getPosition().y) {
                 	minFOverBound = recursive_search(path, currentNode.getG() + child.distFromParent()+1, currentFBound);
                 }
                 else {                	
@@ -108,11 +135,17 @@ public class IDAStar {
         return minFFound;
     }
     
-    // Devolvemos el path completo para que pueda ser leido por nuestro agente
+    /**
+     * Devolvemos el path completo para que pueda ser leido por nuestro agente.
+     * 
+     * @param endPathNode nodo obtenido de la funcion search()
+     * @return lista de nodos ordenados que representan el camino optimo
+     */
     public ArrayList<Node> getPath(Node endPathNode) {
         ArrayList<Node> path = new ArrayList<>();
         path.add(endPathNode);
 
+        // El bucle inserta en una lista los nodos hasta llegar al padre
         while (endPathNode.getParent() != null) {
             path.add(0, endPathNode.getParent());
             endPathNode = endPathNode.getParent();
