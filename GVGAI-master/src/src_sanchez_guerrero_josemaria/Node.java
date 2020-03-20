@@ -151,7 +151,11 @@ public class Node implements Comparable<Node> {
      * @return lista de nodos sucesores.
      */
     public List<Node> getSuccessors(ArrayList<Vector2d> tiposObs){
+    	
+    	// Declaromos una lista para los nodos
     	List<Node> successors = new ArrayList<Node>();
+    	
+    	// Insertamos en ella las casillas que rodean a la actual
     	Node top = new Node( new Vector2d(this.position.x, this.position.y-1) );
     	top.setParent(this);
     	Node bottom = new Node( new Vector2d(position.x, position.y+1) );
@@ -161,6 +165,7 @@ public class Node implements Comparable<Node> {
     	Node right = new Node( new Vector2d(position.x+1, position.y) );
     	right.setParent(this);
     	
+    	// Comprobamos que no son casillas no transitables
     	if (!tiposObs.contains( top.position )) {
     		successors.add(top);
     	}
