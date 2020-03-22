@@ -55,7 +55,7 @@ public class DeliberativoSimple extends AbstractPlayer {
         
         // Se inicializa el objeto del pathfinder con los obstaculos
         pf = new IDAStar(initialState, goalState, tiposObs);
-        //Calculamos un camino desde la posicion del avatar a la posicion del portal
+        // Calculamos un camino desde la posicion del avatar a la posicion del portal
         path = pf.getPath( pf.search() );
         // Quitamos el primero, ya que estamos en el
         path.remove(0);

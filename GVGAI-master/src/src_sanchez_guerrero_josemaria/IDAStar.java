@@ -9,8 +9,11 @@ import tools.Vector2d;
 public class IDAStar {
 
 	// Creamos las variables para los nodos
+	// Nodo inicial desde donde saldra nuestro avatar
     private Node initialState;
+    // Nodo objetivo para el camino
     private Node goalState;
+    // Posiciones de los obstaculos del mapa
     private ArrayList<Vector2d> tiposObs;
 
     
@@ -45,7 +48,7 @@ public class IDAStar {
         ArrayList<Node> path = new ArrayList<>();
         path.add(0, this.initialState);
 
-        // Repetimos el bucle con un nuevo F más grande hasta que:
+        // Repetimos el bucle con un nuevo F mas grande hasta que:
         // - Se devuelve 0, es decir, hemos encontrado la ruta mas optima
         // - Double.MAX_Value - No se encontro ningun con una F mayor que el F limite, es decir, no hay solucion
         double smallestNewFBound;

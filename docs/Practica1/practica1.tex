@@ -127,17 +127,24 @@ que consiste en mantener al avatar lo más alejado posible de los enemigos en ca
 
 \section{Deliberativo}
 
-Para nuestros agentes deliberativos vamos a utilizar, como hemos mencionado antes, el algoritmo IDA*.
-Este algoritmo está basado en el algoritmo base A* (es una extensión de este), sin embargo, he decidido
-implementar este ya que obtiene los mismos resultados, pero no almacena todos los posibles nodos que puede
-visitar y reduce considerablemente el consumo de memoria.
+Para nuestros agentes deliberativos vamos a utilizar, como hemos mencionado antes, el \textbf{algoritmo IDA*}.
+He elegido este algoritmo porque está basado en el algoritmo base A* (es una extensión de este), sin embargo,
+he decidido implementar IDA ya que obtiene los mismos resultados, pero no necesita almacenar todos y cada uno
+de los posibles nodos candidatos. La gran ventaja que nos ofrece esto, es que reduce considerablemente el
+consumo de memoria.
+
+No obstante, pese a tener un consumo bajo en memoria, se podría haber implementado un algoritmo más eficiente
+en cuanto a tiempo, sobre todo si tenemos en cuenta que disponemos 40 milisegundos por cada \textit{tick}. En
+caso de que queramos calcular una ruta en este periodo de tiempo, puede ser que nos de error. En mi caso,
+lo he dejado así porque los mapas son bastante pequeños y no muy complejos, por lo que no debería de tener
+ningún problema; sin embargo, para mapas más difíciles sí que habría que mejorar su eficiencia.
 
 A la hora de implementarlo, he necesitado dos clases. La primera es la clase ''\textbf{\textit{IDAStar.java}}'',
 en la cual está implementado todo el algoritmo; y otra llamada ''\textbf{\textit{Node.java}}'', la cual
 utilizamos para representar de una forma más sencilla cada una de las casillas del tablero adaptadas a nuestro
-algoritmo. A continuación vamos a detallar sus implementaciones.
+algoritmo. A continuación vamos a detallar cómo lo hemos hecho.
 
-Empecemos con la clase \textit{Node} ya que la usaremos dentro de la otra. Lo primero es la declaración de
+Empecemos con la clase \textbf{\textit{Node}} ya que la usaremos dentro de la otra. Lo primero es la declaración de
 variables a utilizar:
 \newline
 \begin{lstlisting}
@@ -154,126 +161,77 @@ variables a utilizar:
     private Vector2d position;
 \end{lstlisting}
 
-He añadido un constructor para poder crear un nuevo nodo a partir de una posición (x,y):
-\newline
+Como es un algoritmo basado en el A*, tenemos que poner las 3 variables características de éste: $f()=g() + h()$.
+Junto a ellas, también hay que poner la posición en coordenadas $(x,y)$ del nodo actual, y otra variable para
+el padre, es decir, la posición de la cual se ha generado.
+
+He añadido un constructor para poder crear un nuevo nodo a partir de una variable \textit{Vector2d}, que
+representa una posición concreta en el mapa. Para acceder y modificar todas estas variables tendremos sus
+correspondientes métodos \textit{getX()} y \textit{setX(value)}.
+
+Implementaremos las siguientes funciones que nos podrán ser útiles en determinadas situaciones. Para comparar
+un nodo con otro, es decir, comparar los valores de \textit{f()}, he añadido una función que devuelve -1, 1 o 0
+dependiendo de si es menor, mayor o igual al nodo a comparar, respectivamente. Tenemos otra función que nos
+dirá si un nodo es igual a otro (no en cuanto al valor de \textit{f()}, sino al estado de los nodos). Para
+obtener los nodos sucesores del nodo actual, la cual inserta en una lista los nodos correspondientes a las
+casillas que rodean a la actual, comprobando antes que esta casilla sea transitable, es decir, no sea un
+obstaculo. Por último, tenemos la función que determina la \textit{h()}. Como estamos en un mapa cuadriculado,
+la distancia al padre siempre va a ser 1.
+
+Una vez hemos terminado con la clase \textit{Node}, vamos a pasar a la clase \textbf{\textit{IDAStar}}. En
+ella tenemos las siguientes variables:
 \begin{lstlisting}
-    /**
-	 * Constructor a partir de una posicion (x,y) del mapa.
-	 * 
-	 * @param position
-	 */
-	Node(Vector2d position){
-		this.position = position;
-	}
+    // Creamos las variables para los nodos
+
+    // Nodo inicial desde donde saldra nuestro avatar
+    private Node initialState;
+    // Nodo objetivo para el camino
+    private Node goalState;
+    // Posiciones de los obstaculos del mapa
+    private ArrayList<Vector2d> tiposObs;
+
 \end{lstlisting}
 
-Para acceder y modificar estas variables tendremos sus correspondientes métodos \textit{getX} y \textit{setX}.
-Para compara un nodo con otro, es decir, comparar los valores de \textit{f()}, he añadido la siguiente función:
-\newline
-\begin{lstlisting}
-    /**
-     * Compara el valor de f() del nodo actual con otro.
-     * 
-     * @param n Nodo a comparar.
-     * @return -1 si el actual es menor que n,
-     *          0 si actual es igual que n,
-     *          1 si actual es mayor que n.
-     */
-    @Override
-    public int compareTo(Node n) {
-        if(this.fScore < n.fScore)
-            return -1;
-        if(this.fScore > n.fScore)
-            return 1;
-        return 0;
-    }
-\end{lstlisting}
+Aqui también tenemos un constructor para que nos genere un camino a partir del nodo inicial, otro final y una
+lista con las posiciones de los objetos por las que no puede pasar nuestro avatar.
 
-También dispondremos de una función que determina si un nodo es igual que otro, pero no en cuanto a sus valores
-de \textit{f()}, si no en cuanto a sus estados:
-\newline
-\begin{lstlisting}
-    /**
-     * Determina si otro nodo es igual al nodo actual. Dos nodos son
-     * iguales si sus estados son iguales (no f ()).
-     * 
-     * @param otro nodo Nodo a comparar.
-     * @return true si el otro nodo es igual, false en caso contrario.
-     */
-    @Override
-    public boolean equals(Object o)
-    {
-        return this.position.equals(((Node)o).position);
-    }
-\end{lstlisting}
+La primera función más relevante de esta clase es \textbf{\textit{search()}}, en la cual comienza la
+búsqueda. En ella realizaremos una búsqueda recursiva (que detallaremos posteriormente), hasta que la cota
+hallada sea 0, o lo que es lo mismo, hasta que hayamos llegado al objetivo. Devuelve un $Node$ que es el
+último nodo de la ruta óptima. Devolverá nulo si no se puede encontrar el nodo objetivo.
 
-Para obtener los nodos sucesores he utilizado la siguiente función:
-\newline
-\begin{lstlisting}
-    /**
-     * Genera una lista de los nodos sucesores al nodo actual.
-     * Devolvemos cada una de las casillas que rodean a la actual,
-     * comprobando antes que esta casilla sea transitable, es
-     * decir, no sea un obstaculo.
-     *
-     * @param tiposObs son las casillas no transitables del mapa.
-     * @return lista de nodos sucesores.
-     */
-   public List<Node> getSuccessors(ArrayList<Vector2d> tiposObs){
+Ahora vamos a pasar a la función \textbf{\textit{recursive\_search()}}, la cual es la que maneja todo
+el algoritmo y encuentra el camino óptimo desde dentro de la función \textit{search()}. Ésta busca recursivamente
+los hijos de los nodos, evitando buscar el camino hacia abajo con una $f$ más alta que el límite $f$ actual.
+Si se encuentran caminos con un limite más alto, devolverá la $f$ más pequeña sobre el límite encontrado.
+Este límite sobre el $f$ mas pequeño es un nuevo límite $f$ potencial durante la próxima iteración. La función
+devolverá 0 si se encuentra el nodo objetivo e Integer.MAX\_VALUE si no se puede encontrar el nodo objetivo.
 
-       // Declaromos una lista para los nodos
-       List<Node> successors = new ArrayList<Node>();
-       
-       // Insertamos en ella las casillas que rodean a la actual
-       Node top = new Node(new Vector2d(this.position.x,
-                                        this.position.y-1));
-       top.setParent(this);
-       Node bottom = new Node(new Vector2d(position.x, position.y+1));
-       bottom.setParent(this);
-       Node left = new Node(new Vector2d(position.x-1, position.y));
-       left.setParent(this);
-       Node right = new Node(new Vector2d(position.x+1, position.y));
-       right.setParent(this);
-       
-       // Comprobamos que no son casillas no transitables
-       if (!tiposObs.contains( top.position )) {
-           successors.add(top);
-       }
-       if (!tiposObs.contains( bottom.position )) {
-           successors.add(bottom);
-       }
-       if (!tiposObs.contains( left.position )) {
-           successors.add(left);
-       }
-       if (!tiposObs.contains( right.position )) {
-           successors.add(right);
-       }
-       
-       return successors;
-   }
-\end{lstlisting}
+Por último, tenemos una función \textit{\textbf{getPath()}} que devuelve una lista de nodos que representa el
+camino óptimo. Como hemos mencionado, la función \textit{search()} sólo devuleve el nodo final, asi que esta
+función se encargará de pasar por todos los padres del último nodo e insertalos en la lista, hasta llegar al
+nulo.
 
-Por último, tenemos la función que determina la \textit{h()}. Como estamos en un mapa cuadriculado, la distancia
-al padre siempre va a ser 1, por tanto:
-\newline
-\begin{lstlisting}
-    /**
-     * Devuelve la distancia entre el nodo actual y el padre.
-     *
-     * @return 1, porque estamos en un mapa cuadriculado.
-     */
-    public double distFromParent() {
-    	return 1;
-    }
-\end{lstlisting}
-
-Una vez hemos terminado con la clase \textit{Node}, vamos a pasar a la clase \textbf{\textit{IDAStar}}
-
+Con esto ya hemos terminado de explicar las clases y funciones auxiliares que utilizaremos para los modelos
+deliberativos, asi que pasemos a ver el funcionamiento de ambos.
 
 
 \subsection{Deliberativo simple}
 
+Antes de ejecutar el \textit{act} (en este y en todos los agentes), se inicializan las variables correspondientes
+al factor de escala, posición del avatar, portal, objetos, muros, etc\dots; y en el caso del deliberativo, también
+inicializamos y calculamos el path. Esto lo hacemos aquí, porque tenemos más margen de tiempo que en el \textit{act},
+donde sólo tenemos 40 milisegundos para tomar una decisión.
+
+La ventaja que tenemos en este agente deliberativo simple, es que no es necesario recalcular ningún path, por
+lo que el obtenido en un principio es que nos servirá hasta el final. Finalmente, lo único que tendremos que
+hacer en el \textit{act} es obtener el primer elemento del camino calculado (siguiente posición del avatar),
+calcular el siguiente movimiento a partir de él y devolver su acción correspondiente.
+
+
 \subsection{Deliberativo compuesto}
+
+
 
 
 
