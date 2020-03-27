@@ -26,11 +26,11 @@ public class ReactivoCompuesto extends AbstractPlayer {
   	 */
   	public ReactivoCompuesto(StateObservation stateObs, ElapsedCpuTimer elapsedTimer){
   		
-  		//Calculamos el factor de escala entre mundos (pixeles -> grid)
+  		// Calculamos el factor de escala entre mundos (pixeles -> grid)
         fescala = new Vector2d(stateObs.getWorldDimension().width / stateObs.getObservationGrid().length , 
         		  stateObs.getWorldDimension().height / stateObs.getObservationGrid()[0].length);      
         
-        //Ultima posicion del avatar
+        // Ultima posicion del avatar
         ultimaPos = new Vector2d(stateObs.getAvatarPosition().x / fescala.x, stateObs.getAvatarPosition().y / fescala.y);
         initialState = new Node(ultimaPos);
         
@@ -47,13 +47,13 @@ public class ReactivoCompuesto extends AbstractPlayer {
     @Override
     public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
     	
-    	//Obtenemos la posicion del avatar
+    	// Obtenemos la posicion del avatar
         Vector2d avatar = new Vector2d(stateObs.getAvatarPosition().x / fescala.x, stateObs.getAvatarPosition().y / fescala.y);
 
-        //Se determina el siguiente movimiento a partir de la posicion del avatar
+        // Se determina el siguiente movimiento a partir de la posicion del avatar
         Types.ACTIONS siguienteAccion = sigMovimiento( simularAcciones(stateObs), avatar );
 
-        //Se actualiza la ultima posici�n del avatar
+        // Se actualiza la ultima posici�n del avatar
         ultimaPos = avatar;
 
         return siguienteAccion;
@@ -102,7 +102,7 @@ public class ReactivoCompuesto extends AbstractPlayer {
     	}
     	moves.add(idle);
         
-        //Guardamos la informacion sobre el estado inicial
+        // Guardamos la informacion sobre el estado inicial
         double bestDistance = 0;
         Vector2d bestMove = null;
                 

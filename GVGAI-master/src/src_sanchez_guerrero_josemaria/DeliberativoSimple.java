@@ -81,17 +81,17 @@ public class DeliberativoSimple extends AbstractPlayer {
             // Obtenemos la primera posicion registrada en el path
             Node siguientePos = path.get(0);
 
-            //Se determina el siguiente movimiento a partir de la posicion del avatar
+            // Se determina el siguiente movimiento a partir de la posicion del avatar
             siguienteAccion = sigMovimiento(siguientePos.getPosition(), avatar);
 
-            //Se actualiza la ultima posicion del avatar
+            // Se actualiza la ultima posicion del avatar
             ultimaPos = avatar;
             
             return siguienteAccion;
 
         // Si el path esta vacio, el personaje no se mueve
         } else {            
-            //Salida por defecto
+            // Salida por defecto
             return Types.ACTIONS.ACTION_NIL;
         }
         

@@ -56,9 +56,9 @@ public class DeliberativoCompuesto extends AbstractPlayer {
 
         	goalState = new Node(gema);
         	
-        	//Se inicializa el objeto del pathfinder con las ids de los obstaculos
+        	// Se inicializa el objeto del pathfinder con las ids de los obstaculos
             pf = new IDAStar(initialState, goalState, tiposObs);
-            //Calculamos un camino desde la posicion del avatar a la posicion de la gema
+            // Calculamos un camino desde la posicion del avatar a la posicion de la gema
             ArrayList<Node> aux = pf.getPath( pf.search() );
             // Quitamos el primero, ya que estamos en el
             aux.remove(0);
@@ -69,10 +69,10 @@ public class DeliberativoCompuesto extends AbstractPlayer {
             initialState = goalState;
         }
 
-        //Se crea una lista de observaciones de portales, ordenada por cercania al avatar
+        // Se crea una lista de observaciones de portales, ordenada por cercania al avatar
         ArrayList<Observation>[] posicionPortal = stateObs.getPortalsPositions(stateObs.getAvatarPosition());
 
-        //Seleccionamos el portal mas proximo
+        // Seleccionamos el portal mas proximo
         portal = posicionPortal[0].get(0).position;
         portal.x = Math.floor(portal.x / fescala.x);
         portal.y = Math.floor(portal.y / fescala.y);
@@ -80,9 +80,9 @@ public class DeliberativoCompuesto extends AbstractPlayer {
         // Creamos nodo con la posicion obtenida
     	goalState = new Node(portal);
         
-    	//Se inicializa el objeto del pathfinder con las ids de los obstaculos
+    	// Se inicializa el objeto del pathfinder con las ids de los obstaculos
         pf = new IDAStar(initialState, goalState, tiposObs);
-        //Calculamos un camino desde la posicion del avatar a la posicion de la gema
+        // Calculamos un camino desde la posicion del avatar a la posicion de la gema
         ArrayList<Node> aux = pf.getPath( pf.search() );
         // Quitamos el primero, ya que estamos en el
         aux.remove(0);
@@ -120,7 +120,7 @@ public class DeliberativoCompuesto extends AbstractPlayer {
 
         // Si el path esta vacio, el personaje no se mueve
         } else {            
-            //Salida por defecto
+            // Salida por defecto
             return Types.ACTIONS.ACTION_NIL;
         }
         

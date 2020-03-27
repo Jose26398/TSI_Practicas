@@ -47,13 +47,13 @@ public class ReactivoSimple extends AbstractPlayer {
     @Override
     public Types.ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
     	
-    	//Obtenemos la posicion del avatar
+    	// Obtenemos la posicion del avatar
         Vector2d avatar = new Vector2d(stateObs.getAvatarPosition().x / fescala.x, stateObs.getAvatarPosition().y / fescala.y);
 
-        //Se determina el siguiente movimiento a partir de la posicion del avatar
+        // Se determina el siguiente movimiento a partir de la posicion del avatar
         Types.ACTIONS siguienteAccion = sigMovimiento( simularAcciones(stateObs), avatar );
 
-        //Se actualiza la ultima posici�n del avatar
+        // Se actualiza la ultima posici�n del avatar
         ultimaPos = avatar;
 
         return siguienteAccion;
@@ -125,8 +125,8 @@ public class ReactivoSimple extends AbstractPlayer {
         	npcPosition.y = Math.floor(npcPosition.y / fescala.y);
         
         	// Calculamos la distancia Manhattan
-        	double actualDistance = Math.abs(move.x-npcPosition.x) + Math.abs(move.y-npcPosition.y);
-            
+        	double actualDistance = distManhattan(move, npcPosition);
+        	
         	// Comprobamos si la actual es mayor que la mejor
         	if (actualDistance > bestDistance) {
             	bestDistance = actualDistance;

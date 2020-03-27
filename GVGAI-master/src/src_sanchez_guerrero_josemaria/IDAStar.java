@@ -113,6 +113,7 @@ public class IDAStar {
                 path.add(child);
                 double minFOverBound;
                 // Y continuamos la busqueda recursiva, aumentando la G en 1 (en nuestro caso)
+                // En caso de que el avatr tenga que cambiar de direccion, aumenta en 2
                 if (currentNode.getParent() != null &&
                 	currentNode.getParent().getPosition().x != child.getPosition().x &&
                 	currentNode.getParent().getPosition().y != child.getPosition().y) {
