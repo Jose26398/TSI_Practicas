@@ -37,6 +37,7 @@ public class DeliberativoCompuesto extends AbstractPlayer {
         
         // Ultima posicion del avatar
         ultimaPos = new Vector2d(stateObs.getAvatarPosition().x / fescala.x, stateObs.getAvatarPosition().y / fescala.y);
+        initialState = new Node(ultimaPos);
         
         // Lista con las posiciones de los obstaculos
         ArrayList<Observation>[] obstaculos = stateObs.getImmovablePositions();
