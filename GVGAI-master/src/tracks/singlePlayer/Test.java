@@ -26,11 +26,7 @@ public class Test {
 		String sampleOLETSController = "tracks.singlePlayer.advanced.olets.Agent";
 		
 		String pathfinderAstar = "src_sanchez_guerrero_josemaria.Agent";
-		String deliberativoSimple = "src_sanchez_guerrero_josemaria.DeliberativoSimple";
-		String deliberativoCompuesto = "src_sanchez_guerrero_josemaria.DeliberativoCompuesto";
-		String reactivoSimple = "src_sanchez_guerrero_josemaria.ReactivoSimple";
-		String reactivoCompuesto = "src_sanchez_guerrero_josemaria.ReactivoCompuesto";
-		String deliberativoReactivo = "src_sanchez_guerrero_josemaria.DeliberativoReactivo";
+		String myAgent = "src_sanchez_guerrero_josemaria.Agent";
 
 		//Load available games
 		String spGamesCollection =  "examples/all_games_sp.csv";
@@ -57,7 +53,7 @@ public class Test {
 
 		// 2. This plays a game in a level by the controller.
 
-		ArcadeMachine.runOneGame(game, level1, visuals, deliberativoReactivo, recordActionsFile, seed, 0);
+		ArcadeMachine.runOneGame(game, level1, visuals, myAgent, recordActionsFile, seed, 0);
 		
 //        System.out.println("final " + end + "\n");
 

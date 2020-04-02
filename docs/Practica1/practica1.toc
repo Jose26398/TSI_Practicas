@@ -3,7 +3,7 @@
 \contentsline {section}{\numberline {2}Deliberativo}{1}{section.2}% 
 \contentsline {subsection}{\numberline {2.1}Deliberativo simple}{3}{subsection.2.1}% 
 \contentsline {subsection}{\numberline {2.2}Deliberativo compuesto}{4}{subsection.2.2}% 
-\contentsline {section}{\numberline {3}Reactivo}{5}{section.3}% 
+\contentsline {section}{\numberline {3}Reactivo}{4}{section.3}% 
 \contentsline {subsection}{\numberline {3.1}Reactivo simple}{5}{subsection.3.1}% 
-\contentsline {subsection}{\numberline {3.2}Reactivo compuesto}{6}{subsection.3.2}% 
-\contentsline {section}{\numberline {4}Deliberativo-Reactivo}{7}{section.4}% 
+\contentsline {subsection}{\numberline {3.2}Reactivo compuesto}{5}{subsection.3.2}% 
+\contentsline {section}{\numberline {4}Deliberativo-Reactivo}{6}{section.4}% 

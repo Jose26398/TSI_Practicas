@@ -109,9 +109,8 @@
 
 \section{Introducción}
 
-La práctica consiste en implementar varios agentes que se puedan desenvolver adecuadamenete en los
-distintos escenarios propuestos. Dispondremos de 5 mapas distintos, cada uno de ellos con un escenario
-distinto.
+La práctica consiste en implementar un agente que se puedan desenvolver adecuadamenete en los distintos
+escenarios propuestos. Dispondremos de 5 mapas distintos, cada uno de ellos con un escenario distinto.
 
 \begin{itemize}
     \item En el primero simplemente tendremos que encontrar la salida
@@ -128,7 +127,7 @@ que consiste en mantener al avatar lo más alejado posible de los enemigos en ca
 
 \section{Deliberativo}
 
-Para nuestros agentes deliberativos vamos a utilizar, como hemos mencionado antes, el \textbf{algoritmo IDA*}.
+Para nuestro agente deliberativo vamos a utilizar, como hemos mencionado antes, el \textbf{algoritmo IDA*}.
 He elegido este algoritmo porque está basado en el algoritmo base A* (es una extensión de este), sin embargo,
 he decidido implementar IDA ya que obtiene los mismos resultados, pero no necesita almacenar todos y cada uno
 de los posibles nodos candidatos. La gran ventaja que nos ofrece esto, es que reduce considerablemente el
@@ -227,43 +226,18 @@ donde sólo tenemos 40 milisegundos para tomar una decisión.
 La ventaja que tenemos en este agente deliberativo simple, es que no es necesario recalcular ningún path. Esto
 quiere decir que el camino óptimo obtenido en un principio, nos servirá hasta el final.
 
-Finalmente, lo único que tendremos que hacer en el \textit{act} es obtener el primer elemento del camino calculado
-(siguiente posición del avatar), calcular el siguiente movimiento a partir de él y devolver su acción
-correspondiente.
+Finalmente, lo único que tendremos que hacer en el \textit{act} es comprobar que no tenemos enemigos y, una 
+vez hecho, obtener el primer elemento del camino calculado (siguiente posición del avatar), calcular el siguiente
+movimiento a partir de él y devolver su acción correspondiente.
 
 
 \subsection{Deliberativo compuesto}
 
-En este agente procedemos de la misma forma que en el anterior, inicializando variables y calculando el camino
-antes del \textit{act}. Lo que va a diferenciar a este agente es lo siguiente. Como tenemos que recoger una
-serie de gemas antes, tenemos que obtener sus posiciones antes e ir metiendo los caminos a cada una de ellas en
-el que tenemos actualmente.
+Lo que va a diferenciar a este agente es lo siguiente. Como tenemos que recoger una serie de gemas antes, tenemos
+que obtener sus posiciones antes e ir metiendo los caminos de cada una de ellas en el que tenemos actualmente.
 
-Para ello calculamos el camino óptimo entre el avatar y la primera gema dada. Posteriormente, actualizamos
-las posiciones del avatar, haciendo como que ya está en la primera gema; y de la gema, seleccionando la siguiente.
-Con el código lo veremos más claro:
-\newline
-\begin{lstlisting}
-    for (int i=0; i < posicionesGemas[0].size(); i++) {
-        // Seleccionamos las gemas una a una
-        gema = posicionesGemas[0].get(i).position;
-
-        // Nuevo objetivo
-        goalState = new Node(gema);
-        
-        // Se inicializa el objeto del pathfinder
-        pf = new IDAStar(initialState, goalState, tiposObs);
-        // Calculamos el camino
-        ArrayList<Node> aux = pf.getPath( pf.search() );
-        // Quitamos el primero, ya que estamos en el
-        aux.remove(0);
-        // Lo aniadimos al path completo
-        path.addAll(aux);
-        
-        // Actualizamos la posicion
-        initialState = goalState;
-    }
-\end{lstlisting}
+Para ello calculamos el camino óptimo entre el avatar y la primera gema dada. Posteriormente, actualizamos las
+posiciones tanto del avatar, haciendo como que ya está en la primera gema; como de la siguiente gema más cercana.
 
 Cuando no haya más gemas, ya pasaremos a seleccionar el portal como lo hacíamos en el deliberativo simple. Por
 último, en el \textit{act}, volveremos a hacer lo mismo que antes, sacando de todo el camino calculado todas
@@ -271,41 +245,23 @@ las acciones correspondientes.
 
 
 
-
-\newpage
-
 \section{Reactivo}
 
-Para implementar los agentes reactivos no se ha necesitado ninguna clase extra, por lo que estará todo en el
-propio agente. Lo que hemos necesitado ha sido únicamente una función extra que estará implementada en los
-propios agentes. Esta función se llama \textbf{\textit{simularAcciones(StateObservation)}}, y en la cual
-determinaremos la acción más adecuada para alejarse del enemigo partiendo de las posiciones iniciales.
+Para implementar la parte reactiva no se ha necesitado ninguna clase extra, por lo que estará todo en el
+propio agente. Lo que hemos necesitado ha sido únicamente comprobar que estamos en un mapa en el que sólo
+tenemos enemigos y una función extra que estará implementada debajo del \textit{act}. Esta función se llama
+\textbf{\textit{simularAcciones(StateObservation)}}, y en la cual determinaremos la acción más adecuada para
+alejarse del enemigo partiendo de las posiciones iniciales.
 
 Para llevar esto a cabo, tomaremos todos los movimientos posibles y nos quedaremos con el que maximice la
-distancia Manhattan entre el enemigo y el propio avatar. Esta es la parte del código que lo hace:
-\newline
-\begin{lstlisting}
-    // Para todos los movimientos posibles
-    for (Vector2d move : moves) {
-    
-        // Obtenemos la posicion del NPC
-        Vector2d npcPosition = stateObs.getNPCPositions()[0].get(0).position;
-    
-        // Calculamos la distancia Manhattan
-        double actualDistance = distManhattan(move, npcPosition);
-        
-        // Comprobamos si la actual es mayor que la mejor
-        if (actualDistance > bestDistance) {
-            bestDistance = actualDistance;
-            bestMove = move;
-        }
-    }
-\end{lstlisting}
+distancia Manhattan entre el enemigo y el propio avatar.
 
-A la hora de tomar todos los movimientos posibles, hay que tener en cuenta que algunos de ellos no los
-podremos realizar, como por ejemplo, cuando estamos pegados a una pared, no podremos devolver la acción que
-lleve al personaje hacia ella. Otra cosa que también tendremos que incluir en ellos es el movimiento
-\textit{IDLE}, ya que en algunas ocasiones será mejor quedarse quieto a moverse.
+A la hora de tomar todos estos movimientos, hay que tener en cuenta que algunos de ellos no los podremos
+realizar, como por ejemplo, cuando estamos pegados a una pared, no podremos devolver la acción que lleve
+al personaje hacia ella. Otra cosa que también tendremos que incluir en ellos es el movimiento \textit{IDLE},
+ya que en algunas ocasiones será mejor quedarse quieto a moverse. No obstante, si el enemigo más próximo
+está muy cerca (distancia Manhattan 4 he considerado), evito que se quede quito, ya que puede ser muy arriesgado.
+
 
 
 \subsection{Reactivo simple}
@@ -323,23 +279,9 @@ se mueve el enemigo, y cuando éste se acerque se moverá hacia la dirección qu
 Al tener más de un enemigo, en este agente tendremos que hacer una modificacion en cuanto al anterior. Esta
 modificación consiste en que, en la función \textit{simularAcciones()}, en vez de comprobar la distancia en
 cuanto a un sólo enemigo, lo haremos para 2 o más.
-\newline
-\begin{lstlisting}
-    // Mientras queden enemigos sin comprobar
-    while( i < stateObs.getNPCPositions()[0].size() ) {
-        npcPositions = stateObs.getNPCPositions()[0].get(i).position;
-        actualDistance *= distManhattan( move, npcPositions );
-        i++;
-    } 
 
-    // Hacemos la media geometrica
-    actualDistance = Math.pow(actualDistance, 1.0 / 
-                              stateObs.getNPCPositions()[0].size()); 
-\end{lstlisting}
-
-
-Como a la función le pasamos como parametro el estado de todo el mapa, podemos acceder a todas las posiciones
-de todos los enemigos. Esto lo realizaremos para todos los movimientos posibles, y a la hora de comprobar la
+Como a la función le pasamos como parametro el estado de todo el mapa, podemos acceder a las posiciones
+de todos los enemigos. Esto lo realizaremos para todos los movimientos posibles. A la hora de comprobar la
 ganancia entre uno y otro podemos comprobar que no hacemos una sumatoria y media normal y corriente, sino que
 multiplicamos y luego hacemos la raíz cuadrada.
 
@@ -361,23 +303,21 @@ igual que estaba anteriormente.
 
 \section{Deliberativo-Reactivo}
 
-Este agente es el más complejo de todos, no obstante, no incluiremos muchas cosas que no hayamos visto. Para
+Este agente es el más complejo de todos, no obstante, sólo incluiremos las cosas que hemos visto hasta ahora. Para
 implementar este agente, hemos \textbf{unido el deliberativo compuesto y el reactivo compuesto}, de forma que en
 el \textit{act} comprobamos primero si estamos lo suficientemente cerca del enemigo como para ejecutar el reactivo,
 y en caso de no estarlo, pasar al deliberativo para coger las gemas e ir al portal.
 
 Empezaremos inicializándolo todo como en el deliberativo compuesto y ejecutando. A continuación, cuando entremos
-en el \textit{act}, lo primero será calcular la media geométrica de los enemigos como hicimos en el deliberativo
+en el \textit{act}, lo primero será calcular la media geométrica de los enemigos como hicimos en el reactivo
 compuesto. Una vez hecho esto, tendremos que decidir.
 
 En mi caso, tras hacer bastantes pruebas, he decidido que la distancia Manhattan mínima para ejecutar el reactivo
-sea de 6 casillas. Si quisiéramos que nuestro avatar se arriesgue más, le bajaremos el valor; y en caso de que
-queramos que sea más cautelosos, aumentaremos ese valor. (Línea 108 de la clase deliberativoReactivo.java en caso
-de que se quiera modificar).
-
-Como acabamos de decir, si baja de esta distancia se ejecutará el agente \textbf{reactivo}, el cual ya hemos explicado
-cómo funciona. Además de esto, si se cumple la condición también borramos el camino óptimo que ya teníamos. Esto
-lo hacemos porque el reactivo cambiará la posición del agente, y el camino que estábamos siguiendo será modificado.
+sea de 6 casillas por el número de enemigos que haya en el mapa. Esto lo hago así porque una distancia de 6
+posiciones hasta el avatr (o de 12 en caso de una media geométrica entre dos enemigos) me parece una distancia lo
+suficientemente razonable como para tener que reaccionar y que no te maten. Si quisiéramos que nuestro avatar se
+arriesgue más, le bajaremos el valor; y en caso de que queramos que sea más cautelosos, aumentaremos ese valor.
+(Línea 189 de la clase Agente.java en caso de que se quiera modificar).
 
 Con esto pasamos a la parte del \textbf{deliberativo}, el cual ejecutaremos si estamos a una distancia lo
 suficientemente alejada de los enemigos. En esta tenemos que volver a calcular un path, si ha sido limpiado por
@@ -385,11 +325,12 @@ el agente reactivo, y si no, vamos sacando las acciones correspondientes de este
 Junto a esto, he añadido una modificación que puede ayudar a nuestro agente a conseguir todas las gemas antes.
 Consiste en que, si voy dirección a una gema y me encuentro a un enemigo, retrocederé. No obstante, al volver a
 obtener las gemas con la función ''\textit{stateObs.getResourcesPositions()}'', las devolverá en el mismo orden que
-antes y por tanto intentaremos coger la misma aunque el enemigo continúe ahí. Para solucionarlo he decidido hacer
-un \textit{shuffle} del vector de gemas, y así obligarle a que vaya a por otra distinta.
+antes y por tanto intentaremos coger la misma aunque el enemigo continúe ahí. Para solucionarlo, si a la función
+anterior le metemos un parámetro con nuestra posición actual, devolverá las gemas por cercanía a este. Si nos
+alejamos de la primera, nos acercamos más a otra e irá a por ella.
 
 En cuanto al rendimiento, 40 milisegundos puede resultar poco para todo lo que comprobamos, pero realmente no
-suele tardar ni 5 milisegundos. Los únicos problemas llegarían si tenemos que recalcular una ruta muy compleja
+suele tardar ni 1 milisegundos. Los únicos problemas llegarían si tenemos que recalcular una ruta muy compleja
 dentro del \textit{act}, sin embargo, los mapas son bastante sencillos y no muy grandes, por lo que nunca
 tendremos un error a causa de esto.
 
