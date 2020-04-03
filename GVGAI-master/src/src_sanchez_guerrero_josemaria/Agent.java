@@ -52,7 +52,7 @@ public class Agent extends AbstractPlayer {
     	}
     	
     	// Comprobamos si hay enemigos o no
-    	if ( stateObs.getNPCPositions() == null ) {
+    	if (stateObs.getNPCPositions() == null) {
     		notEnemies = true;
     	}
 
