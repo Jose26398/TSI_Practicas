@@ -7,6 +7,7 @@ import ontology.Types;
 import tools.ElapsedCpuTimer;
 import tools.Vector2d;
 import java.util.ArrayList;
+import java.lang.*;
 
 
 public class Agent extends AbstractPlayer {
@@ -30,6 +31,7 @@ public class Agent extends AbstractPlayer {
     
 
   	public Agent(StateObservation stateObs, ElapsedCpuTimer elapsedTimer){
+  		long start = System.currentTimeMillis();
   		
   		// Calculamos el factor de escala entre mundos (pixeles -> grid)
         fescala = new Vector2d(stateObs.getWorldDimension().width / stateObs.getObservationGrid().length , 
@@ -119,6 +121,9 @@ public class Agent extends AbstractPlayer {
         aux.remove(0);
         // Lo aniadimos al path completo que pasa por todas las gemas
         path.addAll(aux);
+        
+        long end = System.currentTimeMillis();
+        System.out.print("dsokjhfdsiuohfsiuhf" + (end-start));
         
   	}
 
