@@ -5,7 +5,7 @@ include "globals.mzn";
 
 array [1..8] of var 0..1: number;
 
-var int : zeros;
+var int : zeros = 3;
 var int : ones;
 
 % La suma de la primera mitad igual a la suma de la segunda mitad

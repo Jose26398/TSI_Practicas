@@ -1,4 +1,4 @@
-% EJERCICIO 7: Construccion de casa 2 %
+% EJERCICIO 8: Construccion de casa 2 %
 include "globals.mzn"; 
 
 % Tareas necesarias para construirla.
