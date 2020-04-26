@@ -28,9 +28,6 @@ array[1..num_tasks] of var 1..total_duration : start;
 array[1..num_tasks] of var 1..total_duration : end;
 var 1..total_duration : total_time;
 
-% Hacemos la parte de satisfaccion y la de minimizacion de tiempo total.
-solve :: int_search( start ++ [total_time], first_fail, indomain_min, complete) minimize total_time;
-
 
 constraint
 % Actualiza el tiempo total utilizado.
@@ -42,6 +39,9 @@ forall(t in 1..num_tasks) (end[t] = start[t] + duration[t]) /\
 % Comprobacion de las precedencias de cada tarea
 forall(p in 1..num_precedences) ( start[ precedences[p,1] ] + duration[ precedences[p,1] ] <= start[ precedences[p,2] ] );
 
+
+% Hacemos la parte de satisfaccion y la de minimizacion de tiempo total.
+solve minimize total_time;
 
 % Resultado:
 output ["Tiempo total: \(total_time)\n"] ++ ["\(tasks[t]) : empieza el dia \(start[t]), tarda \(duration[t]) dias (termina el dia \(start[t] + duration[t]))\n" | t in 1..num_tasks];
