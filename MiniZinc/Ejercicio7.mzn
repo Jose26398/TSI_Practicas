@@ -10,11 +10,6 @@ array[1..num_tasks] of string: tasks = ["Levantar_muros", "Carpinteria_de_tejado
 % Duracion de cada una de las tareas anteriores.
 array[1..num_tasks] of int : duration =  [7, 3, 1, 8, 2, 1, 1, 3, 2];
 
-% Trabajadores disponibles para hacer las tareas.
-int : available_workers = 1000;
-% Trabjadores que realizan cada una de las tareas.
-array[1..num_tasks] of int : workers  =  [1, 1, 1, 1, 1, 1, 1, 1, 1];
-
 % Durancion total que pueden tardar las tareas.
 int : total_duration = sum(t in 1..num_tasks) (duration[t]);
 
@@ -33,7 +28,7 @@ constraint
 % Actualiza el tiempo total utilizado.
 maximum(total_time, end) /\
 % Distribucion de los trabajdores por tarea
-cumulative(start, duration, workers, available_workers) /\
+cumulative(start, duration, [1 | i in 1..num_tasks], 1000) /\
 % Comprobacion de las duraciones de cada tarea
 forall(t in 1..num_tasks) (end[t] = start[t] + duration[t]) /\
 % Comprobacion de las precedencias de cada tarea
