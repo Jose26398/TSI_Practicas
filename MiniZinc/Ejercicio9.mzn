@@ -58,4 +58,4 @@ forall(p in 1..num_precedences)(start[ precedences[p,1] ] + D[precedences[p,1]] 
 solve minimize total_time;
 
 % Resultado:
-%output ["Tiempo total: \(total_time)\n"] ++ ["\(tasks[t]) : empieza el dia \(start[t]), tarda \(D[t]) dias (termina el dia \(start[t] + D[t]))\n" | t in 1..num_tasks];
+output ["Tiempo total: \(total_time)\n"] ++ ["\(tasks[t]) : empieza el dia \(start[t]), tarda \(D[t]) dias (termina el dia \(start[t] + D[t]))\n" | t in 1..num_tasks];

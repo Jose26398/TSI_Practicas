@@ -1,0 +1,246 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[spanish,es-nodecimaldot]{babel}	% Utilizar español
+\usepackage[utf8]{inputenc}					% Caracteres UTF-8
+\usepackage{graphicx}						% Imagenes
+\usepackage[hidelinks]{hyperref}			% Poner enlaces sin marcarlos en rojo
+\usepackage{fancyhdr}						% Modificar encabezados y pies de pagina
+\usepackage{float}							% Insertar figuras
+\usepackage[textwidth=390pt]{geometry}		% Anchura de la pagina
+\usepackage[nottoc]{tocbibind}				% Referencias (no incluir num pagina indice en Indice)
+\usepackage{enumitem}						% Permitir enumerate con distintos simbolos
+\usepackage[T1]{fontenc}					% Usar textsc en sections
+\usepackage{amsmath}						% Símbolos matemáticos
+\usepackage{listings}
+\usepackage{color}
+
+ 
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.99,0.99,0.99}
+ 
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+ 
+\lstset{style=mystyle, language=Java}
+
+% Comando para poner el nombre de la asignatura
+\newcommand{\asignatura}{Técnicas de los Sistemas Inteligentes}
+\newcommand{\autor}{José María Sánchez Guerrero}
+\newcommand{\titulo}{Práctica 2}
+\newcommand{\subtitulo}{Satisfacción de Restricciones}
+
+% Configuracion de encabezados y pies de pagina
+\pagestyle{fancy}
+\lhead{\autor{}}
+\rhead{\asignatura{}}
+\lfoot{Grado en Ingeniería Informática}
+\cfoot{}
+\rfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}		% Linea cabeza de pagina
+\renewcommand{\footrulewidth}{0.4pt}		% Linea pie de pagina
+
+\begin{document}
+\pagenumbering{gobble}
+
+% Pagina de titulo
+\begin{titlepage}
+
+\begin{minipage}{\textwidth}
+
+\centering
+
+\includegraphics[scale=0.5]{img/ugr.png}\\
+
+\textsc{\Large \asignatura{}\\[0.2cm]}
+\textsc{GRADO EN INGENIERÍA INFORMÁTICA}\\[1cm]
+
+\noindent\rule[-1ex]{\textwidth}{1pt}\\[1.5ex]
+\textsc{{\Huge \titulo\\[0.5ex]}}
+\textsc{{\Large \subtitulo\\}}
+\noindent\rule[-1ex]{\textwidth}{2pt}\\[3.5ex]
+
+\end{minipage}
+
+\vspace{0.5cm}
+
+\begin{minipage}{\textwidth}
+
+\centering
+
+\textbf{Autor}\\ {\autor{}}\\[2.5ex]
+\textbf{Rama}\\ {Computación y Sistemas Inteligentes || Grupo 2 - Pablo Mesejo}\\[2.5ex]
+\vspace{0.3cm}
+
+\includegraphics[scale=0.3]{img/etsiit.jpeg}
+
+\vspace{0.7cm}
+\textsc{Escuela Técnica Superior de Ingenierías Informática y de Telecomunicación}\\
+\vspace{1cm}
+\textsc{Curso 2019-2020}
+\end{minipage}
+\end{titlepage}
+
+\pagenumbering{arabic}
+\tableofcontents
+\thispagestyle{empty}				% No usar estilo en la pagina de indice
+
+\newpage
+
+\setlength{\parskip}{1em}
+\setcounter{page}{1}
+
+\section*{Introducción}
+
+Esta práctica consiste en la resolución de una serie de ejercicios utilizando el lenguaje de modelado de restricciones \textbf{\textit{MiniZinc}}.
+En este programa, simplemente tendremos que escribir las variables y restricciones que se nos pidan en el ejercicio, y posteriormente ejecutarlo.
+Sin embargo, tendremos distintas configuraciones para el solucionador o ''\textit{solver}'' a utilizar, y tras varias pruebas, el que mejor
+funcionaba es el ''\textbf{\textit{Chuffed 0.10.4}}''.
+
+
+
+\section*{Ejercicio 1}
+\addcontentsline{toc}{section}{Ejercicio 1}
+En este problema se nos pide codificar 9 letras con un dígito diferente para cada una (entre el 0 y el 9). Esta asignación de dígitos tiene que
+satisfacer la siguiente suma:
+\begin{equation*}
+    TESTE+FESTE+DEINE=KRAFTE
+\end{equation*}
+
+Para resolverlo hemos utilizado dos $sets$ de enteros, uno con el número de dígitos/letras que hay, y el otro con los posibles valores que pueden
+tomar. También hemos utilizado un array con los posibles valores para aplicarle las posteriores restricciones; junto a otro pero de string para
+poder imprimir las letras en el resultado (este último no intervendrá en las operaciones).
+
+Las primera restricción necesaria ha sido la función ''\textit{all\_different()}'', que servirá para que todos los valores que puede adoptar el
+array solución, sean distintos. La segunda restricción consiste en la propia suma, de forma que asigno a cada posición un valor de la suma,
+segmentando el número en unidades, decenas, centenas\dots.
+
+Finalmente, imprimo la solución gracias al array de string declarado anteriormente: \textbf{T=7 | E=0 | S=6 | F=8 | D=9 | I=5 | N=3 | K=2 | R=4 |
+A=1}
+\begin{equation*}
+    30.830 + 60.830 + 50970 = 142.630
+\end{equation*}
+
+
+
+\section*{Ejercicio 2}
+\addcontentsline{toc}{section}{Ejercicio 2}
+En este jercicio tenemos que encontrar un número de 10 cifras, en el cual se cumpla que el primer dígito sea el número de 0s que hay en el propio
+número, el segundo sea el número de 1s, (\dots), y el último sea el número de 9s.
+
+Para ello hemos utilizado un array de enteros de tamaño 10 y que valores de cada posición tengan un valor entre el 0 y el 9. Para asignar este
+valor, utilizamos la función ''\textit{forall()}'' para recorrer todas las posiciones del array. En cada una de ellas, realizaremos un conteo
+de las todas las posiciones con la función ''\textit{count()}'', y comprobamos que el número contado es igual al de la posición en el array.
+
+Si ejecutamos, el resultado que obtenemos es el mismo que en el ejemplo: \textbf{X = 6210001000}
+
+
+
+\section*{Ejercicio 3}
+\addcontentsline{toc}{section}{Ejercicio 3}
+Tenemos que encontrar un horario para distribuir a 6 profesores en un aula durante 6 horas. Cada clase dura 1 hora, pero cada profesor tiene
+distintas restricciones en sus horarios. Se ha representado también como un array, donde cada posición representa a un profesor y sus valores
+serán las horas disponibles.
+
+La primera restricción la vamos a solventar con la función ''\textit{all\_different()}'' vista anteriormente, para que ningún profesor pueda estar
+en el aula a la misma hora que otro. Las siguientes líneas del código corresponderán con las expresiones lógicas que satisfacen los distintos
+horarios de los profesores.
+
+El resultado final que obtendríamos es el siguiente:
+
+    \textbf{Profesor 1 da 1h de clase a las 14:00h}
+
+    \textbf{Profesor 2 da 1h de clase a las 12:00h}
+    
+    \textbf{Profesor 3 da 1h de clase a las 13:00h}
+    
+    \textbf{Profesor 4 da 1h de clase a las 10:00h}
+    
+    \textbf{Profesor 5 da 1h de clase a las 11:00h}
+    
+    \textbf{Profesor 6 da 1h de clase a las 9:00h}
+
+
+
+\section*{Ejercicio 4}
+\addcontentsline{toc}{section}{Ejercicio 4}
+Este ejercicio también consiste en la creación de un horario para los profesores, pero esta vez con distintas condiciones. Dispondremos de 4
+aulas, 4 profesores y 3 asignaturas con 4 grupos cada una, por lo que la representación en este ejercicio será distinta al anterior.
+
+Utilizaremos una matriz donde las filas serán los periodos de tiempo, y las columnas los profesores. Los valores que tomará esta matriz vienen
+determinados por otro array que representa a las distintas asignaturas con sus grupos correspondientes; sin embargo, como tenemos menos
+asignaturas que horas disponibles, he añadido 4 más, llamadas \textit{'EMPTY'}, y serán horas libre para el profesor al que le corresponda.
+
+También he implementado otra matriz igual que la anterior, pero que sus valores representan el grupo que está dando una clase. Gracias a esto,
+y a la funnción ''\textit{alldifferent()}'', que en este caso la aplico por filas, evitamos que el mismo grupo este dando dos clases a la misma
+hora.
+
+En cuanto a las restricciones, he utilizado una estructura similar a la del ejercicio anterior, con expresiones lógicas. Al tener dos matrices,
+vamos asignando asignatura y grupo paralelamente; y también he utilizado ''\textit{forall()}'' para recorrerlas más fácil, por ejemplo:
+
+\texttt{forall(h in HOURS) ( (schedule[h,1] == 2 $\cap$ groups[h,1] == 2)}
+
+Para todas las horas, el profesor 1 puede cursar la asignatura 2 ('IA') en el grupo 2. Finalmente, el resultado de la matriz es el siguiente:
+\begin{table}[h]
+\centering
+\resizebox{300px}{!}{%
+    \begin{tabular}{|c|c|c|c|c|}
+    \hline
+    \textbf{} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} \\ \hline
+    \textbf{9:00-10:00} & IA-G1 & FBD-G2 & FBD-G3 & Empty \\ \hline
+    \textbf{10:00-11:00} & TSI-G1 & Empty & TSI-G3 & IA-G4 \\ \hline
+    \textbf{11:00-12:00} & TSI-G2 & FBD-G1 & FBD-G4 & Empty \\ \hline
+    \textbf{12:00-13:00} & IA-G2 & Empty & TSI-G4 & IA-G3 \\ \hline
+    \end{tabular}%
+}
+\end{table}
+
+
+
+\section*{Ejercicio 5}
+\addcontentsline{toc}{section}{Ejercicio 5}
+
+
+
+\section*{Ejercicio 6}
+\addcontentsline{toc}{section}{Ejercicio 6}
+
+
+
+\section*{Ejercicio 7}
+\addcontentsline{toc}{section}{Ejercicio 7}
+
+
+
+\section*{Ejercicio 8}
+\addcontentsline{toc}{section}{Ejercicio 8}
+
+
+
+\section*{Ejercicio 9}
+\addcontentsline{toc}{section}{Ejercicio 9}
+
+
+
+\section*{Ejercicio 10}
+\addcontentsline{toc}{section}{Ejercicio 10}
+
+
+
+\end{document}

@@ -1,10 +1,11 @@
 % EJERCICIO 5: Horarios 3 %
 include "globals.mzn";
 
-int: n = 9;
+% Definición de variables y constantes:
 set of int: HOURS = 1..6;
 set of int: DAYS = 1..5;
 
+% Definición de los arrays:
 array [HOURS,DAYS] of var 1..15: schedule_subj;
 array [HOURS,DAYS] of var 1..10: schedule_teac;
 

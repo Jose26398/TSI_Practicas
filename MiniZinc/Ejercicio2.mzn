@@ -8,4 +8,4 @@ array [0..9] of var 0..9: number;
 constraint forall(i in 0..9) (count(number, i) == number[i]);
 
 % Result:
-output ["\(number[i])" | i in 0..9];
+output ["X = "] ++ ["\(number[i])" | i in 0..9];

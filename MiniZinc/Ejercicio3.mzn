@@ -8,6 +8,7 @@ set of int: PROF = 1..6;
 % Definición de los arrays:
 array [PROF] of var HOURS: schedule;
 
+
 % Única aula con un único profesor por hora
 constraint all_different(schedule);
 
