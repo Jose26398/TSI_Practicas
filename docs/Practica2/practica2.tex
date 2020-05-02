@@ -111,7 +111,7 @@
 Esta práctica consiste en la resolución de una serie de ejercicios utilizando el lenguaje de modelado de restricciones \textbf{\textit{MiniZinc}}.
 En este programa, simplemente tendremos que escribir las variables y restricciones que se nos pidan en el ejercicio, y posteriormente ejecutarlo.
 Sin embargo, tendremos distintas configuraciones para el solucionador o ''\textit{solver}'' a utilizar, y tras varias pruebas, el que mejor
-funcionaba es el ''\textbf{\textit{Chuffed 0.10.4}}''.
+funcionaba es el ''\textbf{\textit{COIN-BC 2.10}}''.
 
 
 
@@ -215,21 +215,168 @@ Para todas las horas, el profesor 1 puede cursar la asignatura 2 ('IA') en el gr
 
 \section*{Ejercicio 5}
 \addcontentsline{toc}{section}{Ejercicio 5}
+Este ejercicio es muy similar al ejercicio anterior. Tenemos que encontrar una asignación de horarios que satisfagan una serie de condiciones.
+Lo que cambia en este ejercicio son las asignaturas y el tiempo, ya que tendremos que cumplir un número de horas semanales, impartirlas
+por bloques. Tabién tendremos más restricciones en cuanto a profesores u horas que tienen que estar libres.
+
+Lo primero que haremos es definir las variables horas y días, y los arrays asignaturas, las horas por asignatura a la semana, y el profesor que
+imparte cada asignatura. Después creamos dos matrices que representen el horario semanal (horas como filas y días como columnas), uno para las
+asignaturas y otro para los profesores, los cuales rellenaremos con los valores de la matriz asignatura y el número del profesor, respectivamente.
+
+Las primeras restricciones serán dos ''\textit{all\_different}'' para evitar que en un dia se de más de una clase del mismo bloque, y el otro
+para evitar que un profesor imparta más de un bloque al día. A continuación, ponemos que el cuarto periodo sea el recreo para todos los días, y
+que cada una de las asignaturas imparta sus horas correspondientes gracias al array declarado previamente.
+
+Pasamos a poner las restricciones de horarios. Empezamos poniendo que las clases que duran 2 horas no puedan emepzar antes del recreo o antes
+de irse a casa. Para ello simplemente recorremos la matriz por días y con una expresión lógica decimos que esas horas no puedan ser iguales a
+las asignaturas correspondientes. La otra restricción de horario que hay que tener en cuenta es que cuando comience una asignatura de 2 horas,
+la siguiente sea esta misma asignatura. En nuestro caso, para facilitarnos las cosas, hemos decidido poner en el propio array de las asignaturas
+una asignatura AX - parte 2, por ejemplo, \textit{A1-2}. Gracias a esto, recorriendo todos los valores de la matriz (excepto los últimos y los
+recreos) y asignamos las segundas partes correspondientes.
+
+Por último nos queda la restricción de los profesores, para la cual utilizamos la otra matriz creada al principio. Ésta la rellenaremos gracias
+a la matriz de las asignaturas ya obtenida, y dependiendo de que valores tengamos en ella, asignamos un valor u otro a la de profesores. Aclarar
+que no se asignan profesores, si no valores. Esto lo hacemos para tener un profesor distinto gracias a las primeras restricciones. Las
+condiciones implementadas en el código  nos servirán para poner el mismo valor a las asignaturas dadas por el mismo profesor.
+
+El resultado obtenido tras ejecutar es el siguiente:
+\begin{table}[H]
+    \centering
+    \resizebox{380px}{!}{%
+    \begin{tabular}{|c|c|l|l|l|l|}
+    \hline
+     & \textbf{1} & \multicolumn{1}{c|}{\textbf{2}} & \multicolumn{1}{c|}{\textbf{3}} & \multicolumn{1}{c|}{\textbf{4}} & \multicolumn{1}{c|}{\textbf{5}} \\ \hline
+    \textbf{8:00-9:00} & A1 (Prof:1) & \multicolumn{1}{c|}{A4 (Prof:2)} & A9 (Prof:3) & A5 (Prof:2) & A3 (Prof:1) \\ \hline
+    \textbf{9:00-10:00} & A1 (Prof:1) & A4 (Prof:2) & A2 (Prof:4) & A5 (Prof:2) & A3 (Prof:1) \\ \hline
+    \textbf{10:00-11:00} & A6 (Prof:3) & A7 (Prof:4) & A7 (Prof:4) & A6 (Prof:3) & A2 (Prof:4) \\ \hline
+    \textbf{11:00-12:00} & Recreo & \multicolumn{1}{c|}{Recreo} & \multicolumn{1}{c|}{Recreo} & \multicolumn{1}{c|}{Recreo} & \multicolumn{1}{c|}{Recreo} \\ \hline
+    \textbf{12:00-13:00} & A5 (Prof:2) & A1 (Prof:1) & A3 (Prof:1) & A8 (Prof:4) & A4 (Prof:2) \\ \hline
+    \textbf{13:00-14:00} & A5 (Prof:2) & A1 (Prof:1) & A3 (Prof:1) & A8 (Prof:4) & A4 (Prof:2) \\ \hline
+    \end{tabular}%
+    }
+    \end{table}
 
 
 
 \section*{Ejercicio 6}
 \addcontentsline{toc}{section}{Ejercicio 6}
+Ahora se nos plantea un problema que consiste en adivinar dónde está la cebra y qué persona bebe agua en un vecindario. Este vecindario esta
+formado por 5 personas, las cuales tienen una serie de características que las diferencian unas de otras: región, profesión, animal, bebida,
+color de la casa y posición de la casa con respecto a los demás (están en una línea recta).
 
+La forma en la que se ha resuelto el problema es muy sencilla. He creado una matriz de tamaño $5x6$ (número de vecinos x características) y
+cada uno de los valores que tomará una celda vienen definidos por lo siguiente. Las características serán arrays de strings con todas las
+características disponibles, asi que cada valor de la matriz será la posición (int) que tiene esa característica en el array.
+
+Una vez hecho esto, lo siguiente será simplemente poner las expresiones lógicas correspondientes:
+
+\texttt{\% El vasco vive en la casa roja.}
+
+\vspace{-8px}
+
+\texttt{constraint matrix[1,4] == 1;}
+
+siendo la primera fila de la matriz el vasco, la cuarta columna el color de la casa y '\textit{colors[\textbf{1}]}' el rojo. El resultado final
+es el siguiente:
+
+\textbf{El vasco es escultor, tiene caracoles, bebe leche, su casa en roja y vive en la posicion centro}
+
+\textbf{El catalan es violinista, tiene perro, bebe zumo, su casa en blanca y vive en la posicion  centroderecha}
+
+\textbf{El gallego es pintor, tiene cebra, bebe cafe, su casa en verde y vive en la posicion derecha}
+
+\textbf{El navarro es medico, tiene caballo, bebe te, su casa en azul y vive en la posicion centroizquierda}
+
+\textbf{El andaluz es diplomatico, tiene zorro, bebe agua, su casa en amarilla y vive en la posicion izquierda}
+
+Por lo tanto, la \textbf{CEBRA} la tiene el gallego, y el andaluz bebe \textbf{AGUA}.
 
 
 \section*{Ejercicio 7}
 \addcontentsline{toc}{section}{Ejercicio 7}
+En este ejercicio disponemos de la informaciónn necesaria para construir una casa paso a paso. Viene representada en una tabla, donde la primera
+columna son los identificadores de las tareas necesarias para construirla, la segunda sus nombres, la tercera el tiempo que se tarda en hacerla
+y la cuarta las tareas que tienen que estar hechas antes de realizar la actual (relación de precedencia).
+
+Empezamos declarando un array de string con todas las tareas que llevaremos a cabo, y otro con la duración de cada una de ellas. A continuación,
+guardamos en una variable el tiempo máximo que pueden tardar las tareas (si las ejecutamos una tras otra).
+
+También tenemos una matriz de $9x2$ para las precedencias, donde la primera columna es la tarea actual y la segunda es la tarea que no se puede
+ejecutar hasta que termine. El resto de variables que declaramos son los tiempos en los que empieza a construir (\texttt{start})(ponemos 0
+porque el día 1 ya lo estaríamos contando como un día de trabajo), los tiempos en los que finalizan las tareas (\texttt{end}), y el tiempo total
+que lleva construyéndose la casa.
+
+Ahora vamos a pasar a las restricciones utilizadas. La primera de ellas es la función ''\texttt{maximum()}'', y con la cual nos quedamos siempre
+con el valor máximo que tiene la variable '\texttt{end}'.
+
+Pasamos a la función ''\texttt{cumulative()}'', que es la más importante en este ejercicio. Ésta acepta como parámetros nuestros arrays 'start'
+y el de duración de cada tarea, y con ellos calcular el tiempo que tardarían una serie de trabjadores en realizarlas. Estos trabjadores se
+declaran en los siguientes parámetros, pero como en nuestro caso tenemos siempre uno disponible, se ha asignado uno para cada tarea y 1000
+disponibles (un número ilimitado de éstos).
+
+Por último nos queda hacer dos ''\texttt{forall()}''. Uno que recorra las tareas y vaya sumando a la variable \texttt{end} la suma del inicio
+más la duración; y otro que recorra las precedencias y evite que se ejecuten las que tienen un tiempo más alto que sus predecesoras. También
+nos queda comentar que, como se nos dice el enunciado, utilizamos la función ''\textbf{solve minimize total\_time}'' con la variable del tiempo
+máximo obtenido antes.
+
+El resultado final es el siguiente:
+
+\textbf{Tiempo total: 18} \vspace{-8px}
+
+\textbf{Levantar\_muros: empieza el dia 0, tarda 7 (termina el dia 7)} \vspace{-8px}
+
+\textbf{Carpinteria\_de\_tejado: empieza el dia 7, tarda 3 (termina el dia 10)}\vspace{-8px}
+
+\textbf{Tejado : empieza el dia 11, tarda 1 (termina el dia 12)} \vspace{-8px}
+
+\textbf{Instalacion\_electrica : empieza el dia 7, tarda 8 (termina el dia 15)} \vspace{-8px}
+
+\textbf{Pintado\_fachada : empieza el dia 16, tarda 2 (termina el dia 18)} \vspace{-8px}
+
+\textbf{Ventanas : empieza el dia 15, tarda 1 (termina el dia 16)} \vspace{-8px}
+
+\textbf{Jardin : empieza el dia 17, tarda 1 (termina el dia 18)} \vspace{-8px}
+
+\textbf{Techado : empieza el dia 8, tarda 3 dias (termina el dia 11)} \vspace{-8px}
+
+\textbf{Pintado\_interior : empieza el dia 16, tarda 2 dias (termina el dia 18)} \vspace{-8px}
 
 
 
 \section*{Ejercicio 8}
 \addcontentsline{toc}{section}{Ejercicio 8}
+Este ejercicio es exactamente igual que el anterior, con el único cambio de que esta vez sí que tenemos un número de trabajadores limitados (3) y
+además cada una de las tareas requiere una cantidad de trabajadores determinada.
+
+Para solventar esta nueva restricción, añadimos una variable para los trabajadores disponiobles y otro array con los necesarios para realizar
+una determinada tarea. Estos tiempos son los que están en la tabla del enunciado. Como dijimos en el ejercicio anterior, la función encargada
+de manejar estos tiempos es la función ''\texttt{cumulative()}'', en la que pusimos infinitos trabajadores y que cada tarea sólo necesitaba
+a uno. Pues en este caso, en el parámetro que nos dice los trabajdores necesarios por tarea meteremos el array, y en el siguiente los trabajdores
+disponibles (3 en este caso).
+
+\texttt{cumulative(start, duration, workers, available\_workers)}
+
+El resto del programa se mantendría exactamente igual. El resultado final si ejecutamos es el siguiente:
+
+\textbf{Tiempo total: 22} \vspace{-8px}
+
+\textbf{Levantar\_muros: empieza el dia 0, tarda 7 (termina el dia 7)} \vspace{-8px}
+
+\textbf{Carpinteria\_de\_tejado: empieza el dia 7, tarda 3 (termina el dia 10)}\vspace{-8px}
+
+\textbf{Tejado : empieza el dia 18, tarda 1 (termina el dia 19)} \vspace{-8px}
+
+\textbf{Instalacion\_electrica : empieza el dia 10, tarda 8 (termina el dia 18)}\vspace{-8px}
+
+\textbf{Pintado\_fachada : empieza el dia 20, tarda 2 (termina el dia 22)} \vspace{-8px}
+
+\textbf{Ventanas : empieza el dia 19, tarda 1 (termina el dia 20)} \vspace{-8px}
+
+\textbf{Jardin : empieza el dia 19, tarda 1 (termina el dia 20)} \vspace{-8px}
+
+\textbf{Techado : empieza el dia 12, tarda 3 dias (termina el dia 15)} \vspace{-8px}
+
+\textbf{Pintado\_interior : empieza el dia 20, tarda 2 dias (termina el dia 22)} \vspace{-8px}
 
 
 

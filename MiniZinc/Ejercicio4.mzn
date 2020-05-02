@@ -12,12 +12,12 @@ array[HOURS, PROF] of var 1..16: schedule;
 array[HOURS, PROF] of var 1..16: groups;
 
 
-% Asignamos sólo una asignatura a cada profesor y horario
+% Asignamos sólo una asignatura a cada profesor y horario.
 constraint alldifferent(schedule);
-% Evitamos que en una hora este dando clase el mismo grupo
+% Evitamos que en una hora este dando clase el mismo grupo.
 constraint forall (h in HOURS) (alldifferent( [ groups[h,p] | p in PROF ]) ); 
 
-% Ponemos las asignaturas y grupos que cada profesor cursa y las restricciones de horarios de cada uno
+% Ponemos las asignaturas y grupos que cada profesor cursa y las restricciones de horarios de cada uno.
 constraint forall(h in HOURS) ((schedule[h,1] == 1 /\ groups[h,1] == 1) \/ (schedule[h,1] == 2 /\ groups[h,1] == 2)
                             \/ (schedule[h,1] == 3 /\ groups[h,1] == 1) \/ (schedule[h,1] == 4 /\ groups[h,1] == 2) );
                             
