@@ -24,8 +24,8 @@ array[PRECEDENCES, 1..2] of int : precedences = [|1, 2  |2, 3  |1, 4  |3, 5  |4,
                                               %   A, B   B, C   A, D   C, E   D, E   C, F   D, F   C, G   D, G   A, H   F, I   H, I
 
 % Definicion de variables y constantes:
-array[TASKS] of var 0..total_duration-1 : start;
-array[TASKS] of var 1..total_duration   : end;
+array[TASKS] of var 0..total_duration : start;
+array[TASKS] of var 1..total_duration : end;
 var 1..total_duration : total_time;
 
 

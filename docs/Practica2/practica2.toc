@@ -8,4 +8,4 @@
 \contentsline {section}{Ejercicio 7}{5}{section*.9}% 
 \contentsline {section}{Ejercicio 8}{7}{section*.10}% 
 \contentsline {section}{Ejercicio 9}{7}{section*.11}% 
-\contentsline {section}{Ejercicio 10}{7}{section*.12}% 
+\contentsline {section}{Ejercicio 10}{9}{section*.12}% 

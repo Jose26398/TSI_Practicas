@@ -111,7 +111,7 @@
 Esta práctica consiste en la resolución de una serie de ejercicios utilizando el lenguaje de modelado de restricciones \textbf{\textit{MiniZinc}}.
 En este programa, simplemente tendremos que escribir las variables y restricciones que se nos pidan en el ejercicio, y posteriormente ejecutarlo.
 Sin embargo, tendremos distintas configuraciones para el solucionador o ''\textit{solver}'' a utilizar, y tras varias pruebas, el que mejor
-funcionaba es el ''\textbf{\textit{COIN-BC 2.10}}''.
+funcionaba es el ''\textbf{\textit{Chuffed 0.10.4}}'', ya que nos ofrece la solución completa y óptima.
 
 
 
@@ -141,7 +141,7 @@ A=1}
 
 \section*{Ejercicio 2}
 \addcontentsline{toc}{section}{Ejercicio 2}
-En este jercicio tenemos que encontrar un número de 10 cifras, en el cual se cumpla que el primer dígito sea el número de 0s que hay en el propio
+En este ejercicio tenemos que encontrar un número de 10 cifras, en el cual se cumpla que el primer dígito sea el número de 0s que hay en el propio
 número, el segundo sea el número de 1s, (\dots), y el último sea el número de 9s.
 
 Para ello hemos utilizado un array de enteros de tamaño 10 y que valores de cada posición tengan un valor entre el 0 y el 9. Para asignar este
@@ -166,13 +166,13 @@ El resultado final que obtendríamos es el siguiente:
 
     \textbf{Profesor 1 da 1h de clase a las 14:00h}
 
-    \textbf{Profesor 2 da 1h de clase a las 12:00h}
+    \textbf{Profesor 2 da 1h de clase a las 11:00h}
     
     \textbf{Profesor 3 da 1h de clase a las 13:00h}
     
     \textbf{Profesor 4 da 1h de clase a las 10:00h}
     
-    \textbf{Profesor 5 da 1h de clase a las 11:00h}
+    \textbf{Profesor 5 da 1h de clase a las 12:00h}
     
     \textbf{Profesor 6 da 1h de clase a las 9:00h}
 
@@ -203,10 +203,10 @@ Para todas las horas, el profesor 1 puede cursar la asignatura 2 ('IA') en el gr
     \begin{tabular}{|c|c|c|c|c|}
     \hline
     \textbf{} & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} \\ \hline
-    \textbf{9:00-10:00} & IA-G1 & FBD-G2 & FBD-G3 & Empty \\ \hline
-    \textbf{10:00-11:00} & TSI-G1 & Empty & TSI-G3 & IA-G4 \\ \hline
-    \textbf{11:00-12:00} & TSI-G2 & FBD-G1 & FBD-G4 & Empty \\ \hline
-    \textbf{12:00-13:00} & IA-G2 & Empty & TSI-G4 & IA-G3 \\ \hline
+    \textbf{9:00-10:00} & IA-G2 & FBD-G1 & FBD-G3 & Empty \\ \hline
+    \textbf{10:00-11:00} & TSI-G1 & Empty & TSI-G4 & Empty \\ \hline
+    \textbf{11:00-12:00} & IA-G1 & FBD-G2 & TSI-G3 & IA-G4 \\ \hline
+    \textbf{12:00-13:00} & TSI-G2 & Empty & TSI-G4 & IA-G3 \\ \hline
     \end{tabular}%
 }
 \end{table}
@@ -217,13 +217,14 @@ Para todas las horas, el profesor 1 puede cursar la asignatura 2 ('IA') en el gr
 \addcontentsline{toc}{section}{Ejercicio 5}
 Este ejercicio es muy similar al ejercicio anterior. Tenemos que encontrar una asignación de horarios que satisfagan una serie de condiciones.
 Lo que cambia en este ejercicio son las asignaturas y el tiempo, ya que tendremos que cumplir un número de horas semanales, impartirlas
-por bloques. Tabién tendremos más restricciones en cuanto a profesores u horas que tienen que estar libres.
+por bloques. También tendremos más restricciones en cuanto a profesores u horas que tienen que estar libres.
 
-Lo primero que haremos es definir las variables horas y días, y los arrays asignaturas, las horas por asignatura a la semana, y el profesor que
+Lo primero que haremos es definir las variables horas y días, los arrays asignaturas, las horas por asignatura a la semana, y el profesor que
 imparte cada asignatura. Después creamos dos matrices que representen el horario semanal (horas como filas y días como columnas), uno para las
-asignaturas y otro para los profesores, los cuales rellenaremos con los valores de la matriz asignatura y el número del profesor, respectivamente.
+asignaturas y otro para los profesores, los cuales rellenaremos gracias a los valores de la matriz asignatura y el número del profesor,
+respectivamente.
 
-Las primeras restricciones serán dos ''\textit{all\_different}'' para evitar que en un dia se de más de una clase del mismo bloque, y el otro
+Las primeras restricciones serán dos ''\textit{all\_different()}'' para evitar que en un dia se de más de una clase del mismo bloque, y el otro
 para evitar que un profesor imparta más de un bloque al día. A continuación, ponemos que el cuarto periodo sea el recreo para todos los días, y
 que cada una de las asignaturas imparta sus horas correspondientes gracias al array declarado previamente.
 
@@ -246,12 +247,12 @@ El resultado obtenido tras ejecutar es el siguiente:
     \begin{tabular}{|c|c|l|l|l|l|}
     \hline
      & \textbf{1} & \multicolumn{1}{c|}{\textbf{2}} & \multicolumn{1}{c|}{\textbf{3}} & \multicolumn{1}{c|}{\textbf{4}} & \multicolumn{1}{c|}{\textbf{5}} \\ \hline
-    \textbf{8:00-9:00} & A1 (Prof:1) & \multicolumn{1}{c|}{A4 (Prof:2)} & A9 (Prof:3) & A5 (Prof:2) & A3 (Prof:1) \\ \hline
-    \textbf{9:00-10:00} & A1 (Prof:1) & A4 (Prof:2) & A2 (Prof:4) & A5 (Prof:2) & A3 (Prof:1) \\ \hline
-    \textbf{10:00-11:00} & A6 (Prof:3) & A7 (Prof:4) & A7 (Prof:4) & A6 (Prof:3) & A2 (Prof:4) \\ \hline
+    \textbf{8:00-9:00} & A7 (Prof:4) & \multicolumn{1}{c|}{A3 (Prof:1)} & A1 (Prof:1) & A5 (Prof:2) & A4 (Prof:2) \\ \hline
+    \textbf{9:00-10:00} & A9 (Prof:3) & A3 (Prof:1) & A1 (Prof:1) & A5 (Prof:2) & A4 (Prof:2) \\ \hline
+    \textbf{10:00-11:00} & A2 (Prof:4) & A6 (Prof:3) & A6 (Prof:3) & A7 (Prof:4) & A2 (Prof:4) \\ \hline
     \textbf{11:00-12:00} & Recreo & \multicolumn{1}{c|}{Recreo} & \multicolumn{1}{c|}{Recreo} & \multicolumn{1}{c|}{Recreo} & \multicolumn{1}{c|}{Recreo} \\ \hline
-    \textbf{12:00-13:00} & A5 (Prof:2) & A1 (Prof:1) & A3 (Prof:1) & A8 (Prof:4) & A4 (Prof:2) \\ \hline
-    \textbf{13:00-14:00} & A5 (Prof:2) & A1 (Prof:1) & A3 (Prof:1) & A8 (Prof:4) & A4 (Prof:2) \\ \hline
+    \textbf{12:00-13:00} & A4 (Prof:2) & A5 (Prof:2) & A8 (Prof:4) & A1 (Prof:1) & A3 (Prof:1) \\ \hline
+    \textbf{13:00-14:00} & A4 (Prof:2) & A5 (Prof:2) & A8 (Prof:4) & A1 (Prof:1) & A3 (Prof:1) \\ \hline
     \end{tabular}%
     }
     \end{table}
@@ -307,12 +308,12 @@ porque el día 1 ya lo estaríamos contando como un día de trabajo), los tiempo
 que lleva construyéndose la casa.
 
 Ahora vamos a pasar a las restricciones utilizadas. La primera de ellas es la función ''\texttt{maximum()}'', y con la cual nos quedamos siempre
-con el valor máximo que tiene la variable '\texttt{end}'.
+con el valor máximo que tiene la variable '\texttt{end}', que será el valor a minimizar.
 
 Pasamos a la función ''\texttt{cumulative()}'', que es la más importante en este ejercicio. Ésta acepta como parámetros nuestros arrays 'start'
 y el de duración de cada tarea, y con ellos calcular el tiempo que tardarían una serie de trabjadores en realizarlas. Estos trabjadores se
 declaran en los siguientes parámetros, pero como en nuestro caso tenemos siempre uno disponible, se ha asignado uno para cada tarea y 1000
-disponibles (un número ilimitado de éstos).
+disponibles (un número ilimitado de éstos, como dice en el enunciado).
 
 Por último nos queda hacer dos ''\texttt{forall()}''. Uno que recorra las tareas y vaya sumando a la variable \texttt{end} la suma del inicio
 más la duración; y otro que recorra las precedencias y evite que se ejecuten las que tienen un tiempo más alto que sus predecesoras. También
@@ -337,7 +338,7 @@ El resultado final es el siguiente:
 
 \textbf{Jardin : empieza el dia 17, tarda 1 (termina el dia 18)} \vspace{-8px}
 
-\textbf{Techado : empieza el dia 8, tarda 3 dias (termina el dia 11)} \vspace{-8px}
+\textbf{Techado : empieza el dia 13, tarda 3 dias (termina el dia 16)} \vspace{-8px}
 
 \textbf{Pintado\_interior : empieza el dia 16, tarda 2 dias (termina el dia 18)} \vspace{-8px}
 
@@ -345,10 +346,10 @@ El resultado final es el siguiente:
 
 \section*{Ejercicio 8}
 \addcontentsline{toc}{section}{Ejercicio 8}
-Este ejercicio es exactamente igual que el anterior, con el único cambio de que esta vez sí que tenemos un número de trabajadores limitados (3) y
-además cada una de las tareas requiere una cantidad de trabajadores determinada.
+Este ejercicio es exactamente igual que el anterior, con el único cambio de que esta vez sí que tenemos un número de trabajadores limitados (3),
+y además, cada una de las tareas requiere una cantidad de trabajadores determinada.
 
-Para solventar esta nueva restricción, añadimos una variable para los trabajadores disponiobles y otro array con los necesarios para realizar
+Para solventar esta nueva restricción, añadimos una variable para los trabajadores disponibles y otro array con los necesarios para realizar
 una determinada tarea. Estos tiempos son los que están en la tabla del enunciado. Como dijimos en el ejercicio anterior, la función encargada
 de manejar estos tiempos es la función ''\texttt{cumulative()}'', en la que pusimos infinitos trabajadores y que cada tarea sólo necesitaba
 a uno. Pues en este caso, en el parámetro que nos dice los trabajdores necesarios por tarea meteremos el array, y en el siguiente los trabajdores
@@ -362,32 +363,102 @@ El resto del programa se mantendría exactamente igual. El resultado final si ej
 
 \textbf{Levantar\_muros: empieza el dia 0, tarda 7 (termina el dia 7)} \vspace{-8px}
 
-\textbf{Carpinteria\_de\_tejado: empieza el dia 7, tarda 3 (termina el dia 10)}\vspace{-8px}
+\textbf{Carpinteria\_de\_tejado: empieza dia 15, tarda 3 (termina el dia 18)}\vspace{-8px}
 
 \textbf{Tejado : empieza el dia 18, tarda 1 (termina el dia 19)} \vspace{-8px}
 
-\textbf{Instalacion\_electrica : empieza el dia 10, tarda 8 (termina el dia 18)}\vspace{-8px}
+\textbf{Instalacion\_electrica : empieza el dia 7, tarda 8 (termina el dia 15)}\vspace{-8px}
 
-\textbf{Pintado\_fachada : empieza el dia 20, tarda 2 (termina el dia 22)} \vspace{-8px}
+\textbf{Pintado\_fachada : empieza el dia 19, tarda 2 (termina el dia 21)} \vspace{-8px}
 
 \textbf{Ventanas : empieza el dia 19, tarda 1 (termina el dia 20)} \vspace{-8px}
 
-\textbf{Jardin : empieza el dia 19, tarda 1 (termina el dia 20)} \vspace{-8px}
+\textbf{Jardin : empieza el dia 21, tarda 1 (termina el dia 22)} \vspace{-8px}
 
 \textbf{Techado : empieza el dia 12, tarda 3 dias (termina el dia 15)} \vspace{-8px}
 
 \textbf{Pintado\_interior : empieza el dia 20, tarda 2 dias (termina el dia 22)} \vspace{-8px}
 
 
-
 \section*{Ejercicio 9}
 \addcontentsline{toc}{section}{Ejercicio 9}
+Ahora tendremos que resolver los ejercicios anteriores pero con otra tabla de trabajadores. Esta vez tenemos 3 trabajadores, para las tareas
+solo nos hace falta 1, pero cada uno las realiza en un tiempo distinto. Tendremos que asignar un trabajador a cada tarea de forma que minimizen
+el tiempo al realizarlas todas.
+
+También partiremos de los ejercicios anteriores, por lo que sólo comentaré los cambios respecto a estos. Tendremos 3 trabajadores disponibles,
+pero no tendremos un array de trabajdores necesarios como en el anterior, ya que sólo se necesita 1 por tarea. El array de tiempos ahora se
+transformará en una matriz, siendo las filas las tareas, las columnas el trabajador y los valores el tiempo que tarda cada trabajador por
+tarea. La duración total será, en este caso, la suma de todas las duraciones, y necesitaremos dos variables correspondientes a la duración
+máxima en la que se puede hacer una tarea determinada (\texttt{maxd}) y la duración mínima (\texttt{mind}). Con esto ya podremos crear las
+variables \texttt{start} y \texttt{end} que teníamos anteriormente.
+
+Como tenemos opcionales puntos de inicio y duraciones opcionales para cada tarea, tenemos que definir dos variables más que representen estos
+conjuntos. La primera será un array de duraciones acotado entre \texttt{mind} y \texttt{maxd} y el segundo un array con distintos tiempos. Este
+último es una matriz formada por 'var opt', el cual es un tipo de variable de decisión que puede representar la propia decisión pero con otra
+posibiladad T. En el manual de MiniZinc encontraremos más información de esta variable, ejemplificada además con un ejemplo muy similar a este
+ejercicio. A continuación, explicaremos cómo utilizamos estas dos nuevas variables.
+
+Las restricciones en este ejercicio son un poco más complejas que en los anteriores. Aun así, tanto la función que asigna el tiempo total
+utilizado (''\texttt{maximum()}''), como los dos ''\texttt{forall()}'' que actualizan las duraciones de cada tarea y comprueban las precedencias, sólo
+han cambiado la variable duración por la de duraciones opcionales, asi que nos ahorraremos explicarlas nuevamente. La función
+''\texttt{cumulative()}'' debido a las siguientes restricciones no la necesitaremos.
+
+Por último, tenemos las dos nuevas restricciones necesarias para resolver este ejercicio correctamente. En la primera utilizamos la función
+''\texttt{disjunctive()}'' para todos los trabajadores. Esta función recibe dos parámetros, el array con distintos tiempos de inicio y la matriz
+de duraciones. Esta función hace que un trabajador pueda estar solo en una tarea por franja de tiempo, de forma que comprueba para cada tarea
+y punto de inicio específicos, que no se solape con ninguna otra (no pueden superponerse el tiempo de inicio + duración).
+
+Para la segunda restricción utilizamos la función ''\texttt{alternative()}'', la cual nos asegura que cada tarea se ejecuta una sola vez. 
+Comprueba que los dos primeros argumentos pasados a la función se encuentren en los arrays pasados como terceros y cuartos argumentos. Se
+recorren todas las tareas y se comprueba si el comienzo de cada una de ellas se encuentra en el array de comienzos opcionales, y lo mismo con
+sus duraciones asociadas. Gracias a esto relacionamos la tarea y su duración a su trabajador correspondiente, el que la va a realizar.
+\newpage
+La solución óptima es la siguiente:
+
+\textbf{Tiempo total: 12} \vspace{-8px}
+
+\textbf{Levantar\_muros: empieza el dia 0, tarda 4 (termina el dia 4)} \vspace{-8px}
+
+\textbf{Carpinteria\_de\_tejado: empieza el dia 4, tarda 3 (termina el dia 7)}\vspace{-8px}
+
+\textbf{Tejado : empieza el dia 8, tarda 1 (termina el dia 9)} \vspace{-8px}
+
+\textbf{Instalacion\_electrica : empieza el dia 7, tarda 8 (termina el dia 9)}\vspace{-8px}
+
+\textbf{Pintado\_fachada : empieza el dia 10, tarda 2 (termina el dia 12)} \vspace{-8px}
+
+\textbf{Ventanas : empieza el dia 9, tarda 1 (termina el dia 10)} \vspace{-8px}
+
+\textbf{Jardin : empieza el dia 11, tarda 1 (termina el dia 12)} \vspace{-8px}
+
+\textbf{Techado : empieza el dia 9, tarda 1 dias (termina el dia 10)} \vspace{-8px}
+
+\textbf{Pintado\_interior : empieza el dia 10, tarda 2 dias (termina el dia 12)} \vspace{-8px}
 
 
 
 \section*{Ejercicio 10}
 \addcontentsline{toc}{section}{Ejercicio 10}
+Este problema consiste en el clásico ''problema de la mochila'' en el cual tenemos una serie de objetos con un determinado peso y valor, y
+tendremos que meterlos en una mochila con un límite de capacidad. Tendremos que seleccionar el conjunto de objetos que más valor tenga y que,
+a su vez, nos entre en la mochila (la cual tiene 275 kg de capacidad). Los pesos y el nivel de preferencia los tendremos en la tabla del
+enunciado.
 
+Al igual que en los ejercicios anteriores, veamos primero la declaración de variables. Hemos creado tres arrays, uno para cada columna de la
+tabla proporcionada (nombres, pesos y preferencia), una variable con el peso de la mochila, y un vector solución de 0s y 1s, donde 0 significa
+que el objeto no está en la mochila y el 1 si.
+
+La restricción que utilizaremos en este ejercicio es muy sencilla. Simplemente hacemos una sumatoria de todos los objetos de forma que
+multiplicamos el peso por el vector solución, es decir, si el objeto está en la mochila, lo añade a la suma (multiplica por 1) y si no está
+no lo añade (multiplica por 0). Tras esto hay que comprobar si nos hemos pasado o no del peso máximo.
+
+Finalmente, haremos lo mismo, pero en la función ''\texttt{solve maximize}'', y esta vez con las preferencias en vez de con el peso. De esta
+forma, la soluciópn será maximizando esta operación. El resultado óptimo obtenido es el siguiente:
+
+\textbf{Preferencia: 705}
+
+\textbf{Mochila: Mapa, Compas, Agua, Sandwich, Azucar, Queso, Protector}
 
 
 \end{document}
