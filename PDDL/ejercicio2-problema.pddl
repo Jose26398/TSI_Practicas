@@ -191,17 +191,17 @@
         (unidadEn vce2 loc2_2)
         (unidadEn vce3 loc2_2)
 
-        (asignarRecursoEn mineral1 loc4_2)
-        (asignarRecursoEn mineral2 loc5_2)
-        (asignarRecursoEn mineral3 loc5_3)
+        (asignarRecursoEn Mineral loc4_2)
+        (asignarRecursoEn Mineral loc5_2)
+        (asignarRecursoEn Mineral loc5_3)
 
-        (asignarRecursoEn gas1 loc3_4)
-        (asignarRecursoEn gas2 loc3_5)
+        (asignarRecursoEn Gas loc3_4)
+        (asignarRecursoEn Gas loc3_5)
 
         (necesitaRecurso mando1 Gas)
         (necesitaRecurso barracon1 Mineral)
     )
     (:goal
-        (unidadEn vce1 loc2_3)
+        (edificioEn barracon1 loc2_3)
     )
 )

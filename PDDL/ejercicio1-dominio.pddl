@@ -19,7 +19,7 @@
 
         (existeCamino ?loc1 - Localizaciones ?loc2 - Localizaciones)
 
-        (asignarRecursoEn ?rec - Localizaciones ?loc - Localizaciones)
+        (asignarRecursoEn ?rec - tipoLocalizaciones ?loc - Localizaciones)
 
         (extrayendoEn ?vce - Unidades ?loc - Localizaciones)
 
@@ -62,6 +62,11 @@
                 (unidadTipo ?vce VCE)
                 (unidadEn ?vce ?loc)
                 (not (extrayendoEn ?vce ?loc))
+                (exists (?vce2 - Unidades ?rec - Localizaciones ?loc2 - Localizaciones)
+                        (and(extrayendoEn ?vce2 ?loc2)
+                        (asignarRecursoEn Mineral ?loc2)
+                        )
+                )
             )
         :effect
             (and
