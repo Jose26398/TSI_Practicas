@@ -1,12 +1,12 @@
-(define (domain ejercicio1)
-    (:requirements :strips :typing :negative-preconditions)
+(define (domain ejercicio2)
+    (:requirements :strips :typing :negative-preconditions :equality :conditional-effects :disjunctive-preconditions)
     (:types
         Unidades Edificios Localizaciones - object
         tipoUnidades tipoEdificios tipoLocalizaciones - constants
     )
     (:constants 
         VCE - tipoUnidades
-        CentroDeMando Barracones - tipoEdificios
+        CentroDeMando Barracones Extractor - tipoEdificios
         Mineral Gas - tipoLocalizaciones
     )
     (:predicates
@@ -42,16 +42,23 @@
     )
 
     (:action Asignar
-        :parameters (?vce - Unidades ?loc - Localizaciones)
+        :parameters (?vce - Unidades ?loc - Localizaciones ?rec - tipoLocalizaciones ?ext - Edificios)
         :precondition 
             (and
                 (unidadTipo ?vce VCE)
                 (unidadEn ?vce ?loc)
                 (not (extrayendoEn ?vce ?loc))
+                (asignadoRecursoEn ?rec ?loc)
             )
         :effect 
             (and
-                (extrayendoEn ?vce ?loc)
+                (when (or
+                        (!= ?rec Gas)
+                        (and (edificioEn ?ext ?loc)
+                        (edificioTipo ?ext Extractor))
+                    )
+                    (extrayendoEn ?vce ?loc)
+                )
             )
     )
 
