@@ -188,7 +188,7 @@
         (existeCamino loc5_5 loc5_4)
         (existeCamino loc5_4 loc5_5)
 
-        (edificioEn mando1 loc2_2)
+        ; (edificioEn mando1 loc2_2)
         (unidadEn vce1 loc2_2)
         (unidadEn vce2 loc2_2)
         (unidadEn vce3 loc2_2)
@@ -201,6 +201,7 @@
         (asignadoRecursoEn Gas loc3_5)
 
         (necesitaRecurso mando1 Gas)
+        (necesitaRecurso mando1 Mineral)
         (necesitaRecurso barracon1 Gas)
         (necesitaRecurso extractor1 Mineral)
     )

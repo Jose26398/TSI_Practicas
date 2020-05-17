@@ -69,12 +69,15 @@
                 (unidadTipo ?vce VCE)
                 (unidadEn ?vce ?loc)
                 (not (extrayendoEn ?vce ?loc))
-                (exists (?vce2 - Unidades ?rec - tipoLocalizaciones ?loc2 - Localizaciones)
-                        (and
-                            (extrayendoEn ?vce2 ?loc2)
-                            (asignadoRecursoEn ?rec ?loc2)
-                            (necesitaRecurso ?edi ?rec)
+                (forall (?rec - tipoLocalizaciones)
+                    (imply (necesitaRecurso ?edi ?rec)
+                        (exists (?vce2 - Unidades ?loc2 - Localizaciones)
+                            (and
+                                (extrayendoEn ?vce2 ?loc2)
+                                (asignadoRecursoEn ?rec ?loc2)
+                            )
                         )
+                    )
                 )
             )
         :effect
