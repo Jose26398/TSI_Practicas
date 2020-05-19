@@ -22,9 +22,10 @@
         (asignadoRecursoEn ?rec - tipoLocalizaciones ?loc - Localizaciones)
 
         (extrayendoEn ?vce - Unidades ?loc - Localizaciones)
+        (generando ?rec - tipoLocalizaciones)
 
-        (necesitaRecurso ?edi - Edificios ?rec - tipoLocalizaciones)
-    )
+        (necesita ?edi - tipoEdificios ?rec - tipoLocalizaciones)
+)
     
     (:action Navegar
         :parameters (?uni - Unidades ?loc1 - Localizaciones ?loc2 - Localizaciones)
@@ -57,7 +58,8 @@
                         (and (edificioEn ?ext ?loc)
                         (edificioTipo ?ext Extractor))
                     )
-                    (extrayendoEn ?vce ?loc)
+                    (and (extrayendoEn ?vce ?loc)
+                    (generando ?rec))
                 )
             )
     )
@@ -66,15 +68,17 @@
         :parameters (?vce - Unidades ?edi - Edificios ?loc - Localizaciones)
         :precondition
             (and
-                (unidadTipo ?vce VCE)
-                (unidadEn ?vce ?loc)
-                (not (extrayendoEn ?vce ?loc))
-                (exists (?vce2 - Unidades ?rec - tipoLocalizaciones ?loc2 - Localizaciones)
-                        (and
-                            (extrayendoEn ?vce2 ?loc2)
-                            (asignadoRecursoEn ?rec ?loc2)
-                            (necesitaRecurso ?edi ?rec)
-                        )
+                (unidadTipo ?vce VCE)   ; la unidad tiene que ser un VCE
+                (unidadEn ?vce ?loc)    ; la unidad tiene que estar en la localizacion requerida
+                (not (extrayendoEn ?vce ?loc))  ; no puede estar ocupada extrayendo
+                
+                (exists (?vce2 - Unidades ?rec - tipoLocalizaciones ?loc2 - Localizaciones ?tipoE - tipoEdificios)
+                    (and
+                        (extrayendoEn ?vce2 ?loc2)
+                        (asignadoRecursoEn ?rec ?loc2)
+                        (necesita ?tipoE ?rec)
+                        (edificioTipo ?edi ?tipoE)
+                    )
                 )
             )
         :effect

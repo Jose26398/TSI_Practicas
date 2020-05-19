@@ -198,8 +198,8 @@
         (asignadoRecursoEn Gas loc3_4)
         (asignadoRecursoEn Gas loc3_5)
 
-        (necesitaRecurso mando1 Gas)
-        (necesitaRecurso barracon1 Mineral)
+        (necesita CentroDeMando Gas)
+        (necesita Barracones Mineral)
     )
     (:goal
         (edificioEn barracon1 loc2_3)

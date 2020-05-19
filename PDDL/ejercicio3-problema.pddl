@@ -1,5 +1,5 @@
 (define (problem starcraft)
-    (:domain ejercicio2)
+    (:domain ejercicio3)
     (:objects 
         loc1_1 loc1_2 loc1_3 loc1_4 loc1_5 loc2_1 loc2_2 loc2_3 loc2_4 loc2_5 loc3_1 loc3_2 loc3_3 loc3_4 loc3_5 loc4_1 loc4_2 loc4_3 loc4_4 loc4_5 loc5_1 loc5_2 loc5_3 loc5_4 loc5_5 - Localizaciones
         
@@ -200,10 +200,12 @@
         (asignadoRecursoEn Gas loc3_4)
         (asignadoRecursoEn Gas loc3_5)
 
-        (necesitaRecurso mando1 Gas)
-        (necesitaRecurso mando1 Mineral)
-        (necesitaRecurso barracon1 Gas)
-        (necesitaRecurso extractor1 Mineral)
+        (necesita CentroDeMando Gas)
+        (necesita CentroDeMando Mineral)
+        (necesita Barracones Mineral)
+        (necesita Extractor Mineral)
+        ; (generando Gas)
+        ; (generando Mineral)
     )
     (:goal
         (edificioEn barracon1 loc2_3)
