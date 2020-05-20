@@ -1,4 +1,4 @@
-(define (domain ejercicio4)
+(define (domain ejercicio5)
     (:requirements :strips :typing :negative-preconditions :equality :conditional-effects :disjunctive-preconditions)
     (:types
         Unidades Edificios Localizaciones - object
@@ -6,7 +6,7 @@
     )
     (:constants 
         VCE Marine Segador - tipoUnidades
-        CentroDeMando Barracones Extractor - tipoEdificios
+        CentroDeMando Barracones Extractor BahiaDeIngenieria - tipoEdificios
         Mineral Gas - tipoLocalizaciones
     )
     (:predicates
@@ -28,6 +28,8 @@
         (necesitaU ?uni - tipoUnidades ?rec - tipoLocalizaciones)
 
         (entrena ?tipoE - tipoEdificios ?tipoU - tipoUnidades)
+        (investigado ?tipoU - tipoUnidades)
+        (necesitaI ?tipoU - tipoUnidades ?rec - tipoLocalizaciones)
 )
     
     (:action Navegar
@@ -104,6 +106,7 @@
             (and
                 (entrena ?tipoE ?tipoU)
                 (unidadTipo ?uni ?tipoU)
+                (investigado ?tipoU)
 
                 ; Comprobamos que esta unidad no esta ya creada
                 (not (exists (?loc2 - Localizaciones) (unidadEn ?uni ?loc2)))
@@ -130,6 +133,34 @@
                 (unidadEn ?uni ?loc)
             )
     )
+
+    (:action Investigar
+        :parameters (?tipoU - tipoUnidades)
+        :precondition
+            (and
+                (not (investigado ?tipoU))
+                (exists (?edi - Edificios ?loc - Localizaciones)
+                    (and (edificioEn ?edi ?loc)
+                    (edificioTipo ?edi BahiaDeIngenieria))
+                )
+
+                (forall (?rec - tipoLocalizaciones)
+                    (or
+                    (not (necesitaI ?tipoU ?rec))
+                    (and
+                        (necesitaI ?tipoU ?rec)
+                        (generando ?rec)
+                    )
+                    )
+                )
+                            
+            )
+        :effect
+            (and
+                (investigado ?tipoU)
+            )
+    )
+    
     
     
     
