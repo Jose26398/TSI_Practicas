@@ -6,7 +6,7 @@
     )
     (:constants 
         VCE Marine Segador - tipoUnidades
-        CentroDeMando Barracones Extractor BahiaDeIngenieria - tipoEdificios
+        CentroDeMando Barracones Extractor BahiaDeIngenieria Deposito - tipoEdificios
         Mineral Gas - tipoLocalizaciones
     )
     (:predicates
@@ -83,7 +83,6 @@
                 (not (extrayendoEn ?vce ?loc))  ; no puede estar ocupada extrayendo
                 (not (exists (?otraLoc - Localizaciones) (edificioEn ?edi ?loc)) )
                 (not (exists (?otroEd - Edificios)(edificioEn ?otroEd ?loc)) )
-                (>= (mineralAlmacenado) 50)
 
                 (exists
                     (?tipoE - tipoEdificios)
@@ -104,7 +103,23 @@
         :effect
             (and
                 (edificioEn ?edi ?loc)  ; construye el edificio
-                (decrease (mineralAlmacenado) 50)
+                (when (edificioTipo ?edi CentroDeMando)
+                    (and (decrease (mineralAlmacenado) 150)
+                    (decrease (gasAlmacenado) 50))
+                )
+                (when (edificioTipo ?edi Barracones)
+                    (decrease (mineralAlmacenado) 150)
+                )
+                (when (edificioTipo ?edi Extractor)
+                    (decrease (mineralAlmacenado) 75)
+                )
+                (when (edificioTipo ?edi BahiaDeIngenieria)
+                    (decrease (mineralAlmacenado) 125)
+                )
+                (when (edificioTipo ?edi Deposito)
+                    (and (decrease (mineralAlmacenado) 75)
+                    (decrease (gasAlmacenado) 25))
+                )
             )
     )
 
@@ -139,6 +154,16 @@
         :effect
             (and
                 (unidadEn ?uni ?loc)
+                (when (unidadTipo ?uni VCE)
+                    (decrease (mineralAlmacenado) 50)
+                )
+                (when (unidadTipo ?uni Marine)
+                    (decrease (mineralAlmacenado) 50)
+                )
+                (when (unidadTipo ?uni Segador)
+                    (and (decrease (mineralAlmacenado) 50)
+                    (decrease (gasAlmacenado) 50))
+                )
             )
     )
 
@@ -166,6 +191,10 @@
         :effect
             (and
                 (investigado ?tipoU)
+                (when (= ?tipoU Segador)
+                    (and (decrease (mineralAlmacenado) 50)
+                    (decrease (gasAlmacenado) 200))
+                )
             )
     )
 
@@ -179,14 +208,18 @@
                 )
             )
         :effect
-        (and
-            (when(= ?rec Mineral)
-                (increase (mineralAlmacenado) 10)
+            (and
+                (forall(?uni - Unidades)
+                    (when (and (= ?rec Mineral) (extrayendoEn ?uni ?loc) (unidadTipo ?uni VCE))
+                        (increase (mineralAlmacenado) 10)
+                    )
+                )
+                (forall(?uni - Unidades)
+                    (when (and (= ?rec Gas) (extrayendoEn ?uni ?loc) (unidadTipo ?uni VCE))
+                        (increase (gasAlmacenado) 10)
+                    )
+                )
             )
-            (when (= ?rec Gas)
-                (increase (gasAlmacenado) 10)
-            )
-        )
     )
 
     (:action Desasignar

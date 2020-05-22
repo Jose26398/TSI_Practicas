@@ -232,7 +232,7 @@
     
     (:goal
         (and
-            (unidadEn marine1 loc1_5)
+            (unidadEn marine1 loc1_1)
             ; (unidadEn marine2 loc5_1)
             ; (unidadEn segador1 loc5_1)
             ; (unidadEn vce2 loc5_5)
