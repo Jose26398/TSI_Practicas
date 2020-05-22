@@ -74,6 +74,7 @@
                 (unidadTipo ?vce VCE)           ; la unidad tiene que ser un VCE
                 (unidadEn ?vce ?loc)            ; la unidad tiene que estar en la localizacion requerida
                 (not (extrayendoEn ?vce ?loc))  ; no puede estar ocupada extrayendo
+                (not (exists (?otraLoc - Localizaciones) (edificioEn ?edi ?loc)) )
                 (not (exists (?otroEd - Edificios)(edificioEn ?otroEd ?loc)) )
 
                 (exists

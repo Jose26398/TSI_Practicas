@@ -1,10 +1,10 @@
 (define (problem starcraft)
-    (:domain ejercicio5)
+    (:domain ejercicio6)
     (:objects 
         loc1_1 loc1_2 loc1_3 loc1_4 loc1_5 loc2_1 loc2_2 loc2_3 loc2_4 loc2_5 loc3_1 loc3_2 loc3_3 loc3_4 loc3_5 loc4_1 loc4_2 loc4_3 loc4_4 loc4_5 loc5_1 loc5_2 loc5_3 loc5_4 loc5_5 - Localizaciones
         
         mando1 - Edificios
-        vce1 vce2 vce3 vce4 vce5 vce6 vce7 vce8 vce9 vce10 vce11 vce12 vce13 vce14 vce15 marine1 marine2 segador1 - Unidades
+        vce1 vce2 vce3 marine1 marine2 segador1 - Unidades
 
         mineral1 mineral2 mineral3 - Localizaciones
         gas1 gas2 - Localizaciones
@@ -225,13 +225,16 @@
 
         (necesitaI Segador Gas)
         (necesitaI Segador Mineral)
-        
+
+        (= (mineralAlmacenado) 0)
+        (= (gasAlmacenado) 0)   
     )
+    
     (:goal
         (and
             (unidadEn marine1 loc1_5)
-            (unidadEn marine2 loc5_1)
-            (unidadEn segador1 loc5_1)
+            ; (unidadEn marine2 loc5_1)
+            ; (unidadEn segador1 loc5_1)
             ; (unidadEn vce2 loc5_5)
         )
     )

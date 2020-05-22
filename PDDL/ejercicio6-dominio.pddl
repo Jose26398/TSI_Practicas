@@ -1,7 +1,7 @@
-(define (domain ejercicio5)
-    (:requirements :strips :typing :negative-preconditions :equality :conditional-effects :disjunctive-preconditions)
+(define (domain ejercicio6)
+    (:requirements :strips :typing :negative-preconditions :equality :conditional-effects :disjunctive-preconditions :fluents)
     (:types
-        Unidades Edificios Localizaciones - object
+        Unidades Edificios Localizaciones Cantidad - object
         tipoUnidades tipoEdificios tipoLocalizaciones - constants
     )
     (:constants 
@@ -30,7 +30,12 @@
         (entrena ?tipoE - tipoEdificios ?tipoU - tipoUnidades)
         (investigado ?tipoU - tipoUnidades)
         (necesitaI ?tipoU - tipoUnidades ?rec - tipoLocalizaciones)
-)
+    )
+
+    (:functions 
+        (mineralAlmacenado)
+        (gasAlmacenado)
+    )
     
     (:action Navegar
         :parameters (?uni - Unidades ?loc1 - Localizaciones ?loc2 - Localizaciones)
@@ -78,6 +83,7 @@
                 (not (extrayendoEn ?vce ?loc))  ; no puede estar ocupada extrayendo
                 (not (exists (?otraLoc - Localizaciones) (edificioEn ?edi ?loc)) )
                 (not (exists (?otroEd - Edificios)(edificioEn ?otroEd ?loc)) )
+                (>= (mineralAlmacenado) 50)
 
                 (exists
                     (?tipoE - tipoEdificios)
@@ -98,6 +104,7 @@
         :effect
             (and
                 (edificioEn ?edi ?loc)  ; construye el edificio
+                (decrease (mineralAlmacenado) 50)
             )
     )
 
@@ -161,6 +168,40 @@
                 (investigado ?tipoU)
             )
     )
+
+    (:action Recolectar
+        :parameters (?loc - Localizaciones ?rec - tipoLocalizaciones)
+        :precondition
+            (and
+                (exists (?vce - Unidades)
+                    (and (extrayendoEn ?vce ?loc)
+                    (asignadoRecursoEn ?rec ?loc))
+                )
+            )
+        :effect
+        (and
+            (when(= ?rec Mineral)
+                (increase (mineralAlmacenado) 10)
+            )
+            (when (= ?rec Gas)
+                (increase (gasAlmacenado) 10)
+            )
+        )
+    )
+
+    (:action Desasignar
+        :parameters (?vce - Unidades ?loc - Localizaciones)
+        :precondition
+            (and
+                (extrayendoEn ?vce ?loc)
+            )
+        :effect
+            (and
+                (not (extrayendoEn ?vce ?loc))
+            )
+    )
+    
+    
     
     
     
