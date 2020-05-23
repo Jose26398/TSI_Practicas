@@ -227,7 +227,8 @@
         (necesitaI Segador Mineral)
 
         (= (mineralAlmacenado) 0)
-        (= (gasAlmacenado) 0)   
+        (= (gasAlmacenado) 0)
+        (= (capacidadMaxima) 100)
     )
     
     (:goal
