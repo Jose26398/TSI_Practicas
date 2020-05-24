@@ -267,14 +267,16 @@
                 ; Para todas las unidades creadas
                 (forall(?uni - Unidades)
                     ; si es un VCE que esta extrayendo mineral, incrementa el mineral almacenado en 10
-                    (when (and (= ?rec Mineral) (extrayendoEn ?uni ?loc) (unidadTipo ?uni VCE))
+                    (when (and (= ?rec Mineral) (exists (?otraLoc - Localizaciones) (extrayendoEn ?uni ?otraLoc))
+                                (unidadTipo ?uni VCE))
                         (increase (mineralAlmacenado) 10)
                     )
                 )
                 ; Para todas las unidades creadas
                 (forall(?uni - Unidades)
                     ; si es un VCE que esta extrayendo gas, incrementa el gas almacenado en 10
-                    (when (and (= ?rec Gas) (extrayendoEn ?uni ?loc) (unidadTipo ?uni VCE))
+                    (when (and (= ?rec Gas) (exists (?otraLoc - Localizaciones) (extrayendoEn ?uni ?otraLoc))
+                     (unidadTipo ?uni VCE))
                         (increase (gasAlmacenado) 10)
                     )
                 )
@@ -285,14 +287,20 @@
     ; DESASIGNAR. Un VCE deja de extraer recursos de un nodo
     ; ----------------------------------------------------------------------------- ;
     (:action Desasignar
-        :parameters (?vce - Unidades ?loc - Localizaciones)
+        :parameters (?vce - Unidades ?loc - Localizaciones ?rec - tipoLocalizaciones)
         :precondition
             (and
-                (extrayendoEn ?vce ?loc)    ; comprueba si esta extrayendo
+                (extrayendoEn ?vce ?loc)         ; comprueba si esta extrayendo
+                (asignadoRecursoEn ?rec ?loc)    ; y que recurso esta generando
+                (generando ?rec)
             )
         :effect
             (and
-                (not (extrayendoEn ?vce ?loc))
+                (when (not (exists (?otroVce - Unidades ?otraLoc - Localizaciones)
+                            (extrayendoEn ?otroVce ?otraLoc) ))     ; si no hay otro vce generando
+                    (not (generando ?rec))                          ; elimina el predicado de la lista
+                )
+                (not (extrayendoEn ?vce ?loc))  ; desasigna el vce del recurso en el que estaba
             )
     )
     
