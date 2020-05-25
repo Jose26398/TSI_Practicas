@@ -42,11 +42,16 @@
         (entrena ?tipoE - tipoEdificios ?tipoU - tipoUnidades)
         ; Indica si la unidad ya esta investigada
         (investigado ?tipoU - tipoUnidades)
-    )
+        
+        
+        (hayEdificio ?loc - Localizaciones)
+        (reclutada ?uni - Unidades)
+        (extrayendoRecurso ?vce - Unidades ?rec - tipoLocalizaciones)
+        (investigaciondisponible)
+)
 
     (:functions 
-        (mineralAlmacenado)
-        (gasAlmacenado)
+        (recursoAlmacenado ?rec - tipoLocalizaciones)
         (capacidadMaxima)
     )
     
@@ -90,7 +95,7 @@
                         (edificioTipo ?ext Extractor))
                     )
                     (and (extrayendoEn ?vce ?loc)   ; entonces asigna al VCE en la localizacion del recurso
-                    (generando ?rec))               ; aniadimos que se esta generando el recurso
+                    (extrayendoRecurso ?vce ?rec))
                 )
             )
     )
@@ -105,58 +110,47 @@
                 (unidadTipo ?vce VCE)           ; la unidad tiene que ser un VCE
                 (unidadEn ?vce ?loc)            ; la unidad tiene que estar en la localizacion requerida
                 (not (extrayendoEn ?vce ?loc))  ; no puede estar ocupada extrayendo
-                (not (exists (?otraLoc - Localizaciones) (edificioEn ?edi ?loc)) )  ; y no puede existir un edificio en
-                                                                                    ; esa localizacion previamente
-                (not (exists (?otroEd - Edificios)(edificioEn ?otroEd ?loc)) )
-
-                ; El tipo de edificio tiene que cumplir que
-                (exists
-                    (?tipoE - tipoEdificios)
-                    (and
-                    (edificioTipo ?edi ?tipoE)
-                    (forall (?rec - tipoLocalizaciones)  ; para todos los recursos existentes
-                        (or
-                            (not (necesitaE ?tipoE ?rec))    ; o bien, no necesita el recurso
-                            (and (necesitaE ?tipoE ?rec)     ; o lo necesita
-                                 (generando ?rec))           ; pero lo esta generando
-                        )
-                    )
-                    )
-                )
+                (not (hayEdificio ?loc))
             )
         :effect
             ; Decrementamos la cantidad de recursos correspondiente a los distintos
             ; tipos de edificios (excepto el deposito que tambien aumenta la capacidad)
             (and
+                (hayEdificio ?loc)
                 (when (and (edificioTipo ?edi CentroDeMando)
-                           (>= (mineralAlmacenado) 150)
-                           (>= (gasAlmacenado) 50))
-                    (and (decrease (mineralAlmacenado) 150)
-                    (decrease (gasAlmacenado) 50)
-                    (edificioEn ?edi ?loc))
+                           (>= (recursoAlmacenado Mineral) 150)
+                           (>= (recursoAlmacenado Gas) 50))
+                    (and (decrease (recursoAlmacenado Mineral) 150)
+                    (decrease (recursoAlmacenado Gas) 50)
+                    (edificioEn ?edi ?loc)
+                    (hayEdificio ?loc))
                 )
                 (when (and (edificioTipo ?edi Barracones)
-                           (>= (mineralAlmacenado) 150))
-                    (and (decrease (mineralAlmacenado) 150)
-                    (edificioEn ?edi ?loc))
+                           (>= (recursoAlmacenado Mineral) 150))
+                    (and (decrease (recursoAlmacenado Mineral) 150)
+                    (edificioEn ?edi ?loc)
+                    (hayEdificio ?loc))
                 )
                 (when (and (edificioTipo ?edi Extractor)
-                           (>= (mineralAlmacenado) 75))
-                    (and (decrease (mineralAlmacenado) 75)
-                    (edificioEn ?edi ?loc))
+                           (>= (recursoAlmacenado Mineral) 75))
+                    (and (decrease (recursoAlmacenado Mineral) 75)
+                    (edificioEn ?edi ?loc)
+                    (hayEdificio ?loc))
                 )
                 (when (and (edificioTipo ?edi BahiaDeIngenieria)
-                           (>= (mineralAlmacenado) 125))
-                    (and (decrease (mineralAlmacenado) 125)
-                    (edificioEn ?edi ?loc))
+                           (>= (recursoAlmacenado Mineral) 125))
+                    (and (decrease (recursoAlmacenado Mineral) 125)
+                    (investigacionDisponible)
+                    (hayEdificio ?loc))
                 )
                 (when (and (edificioTipo ?edi Deposito)
-                           (>= (mineralAlmacenado) 75)
-                           (>= (gasAlmacenado) 25))
-                    (and (decrease (mineralAlmacenado) 75)
-                    (decrease (gasAlmacenado) 25)
+                           (>= (recursoAlmacenado Mineral) 75)
+                           (>= (recursoAlmacenado Gas) 25))
+                    (and (decrease (recursoAlmacenado Mineral) 75)
+                    (decrease (recursoAlmacenado Gas) 25)
                     (increase (capacidadMaxima) 100)
-                    (edificioEn ?edi ?loc))
+                    (edificioEn ?edi ?loc)
+                    (hayEdificio ?loc))
                 )
                 ; Genera la unidad en la localizacion indicada
             )
@@ -172,46 +166,36 @@
                 (entrena ?tipoE ?tipoU)     ; vemos que edificio entrena a la unidad
                 (unidadTipo ?uni ?tipoU)
                 (investigado ?tipoU)        ; la unidad ya ha sido investigada
-
-                ; Comprobamos que esta unidad no esta ya creada
-                (not (exists (?loc2 - Localizaciones) (unidadEn ?uni ?loc2)))
+                (not (reclutada ?uni))
 
                 ; El tipo de unidad tiene que cumplir que
                 (exists
                     (?edi - Edificios)
                     (and
                     (edificioEn ?edi ?loc)      ; exista un edificio que la entrene
-                    (edificioTipo ?edi ?tipoE)
-
-                    (forall (?rec - tipoLocalizaciones)  ; para todos los recursos existentes
-                        (or
-                            (not (necesitaU ?tipoU ?rec))    ; o bien, no necesita el recurso
-                            (and (necesitaU ?tipoU ?rec)     ; o lo necesita
-                                 (generando ?rec))           ; pero lo esta generando
-                        )
-                    )
-                    )
+                    (edificioTipo ?edi ?tipoE))
                 )
             )
         :effect
             ; Decrementamos la cantidad de recursos correspondiente a los distintos
             ; tipos de unidades
             (and
+                (reclutada ?uni)
                 (when (and (unidadTipo ?uni VCE)
-                           (>= (mineralAlmacenado) 50))
-                    (and (decrease (mineralAlmacenado) 50)
+                           (>= (recursoAlmacenado Mineral) 50))
+                    (and (decrease (recursoAlmacenado Mineral) 50)
                     (unidadEn ?uni ?loc))
                 )
                 (when (and (unidadTipo ?uni Marine)
-                           (>= (mineralAlmacenado) 50))
-                    (and (decrease (mineralAlmacenado) 50)
+                           (>= (recursoAlmacenado Mineral) 50))
+                    (and (decrease (recursoAlmacenado Mineral) 50)
                     (unidadEn ?uni ?loc))
                 )
                 (when (and (unidadTipo ?uni Segador)
-                           (>= (mineralAlmacenado) 50)
-                           (>= (gasAlmacenado) 50))
-                    (and (decrease (mineralAlmacenado) 50)
-                    (decrease (gasAlmacenado) 50)
+                           (>= (recursoAlmacenado Mineral) 50)
+                           (>= (recursoAlmacenado Gas) 50))
+                    (and (decrease (recursoAlmacenado Mineral) 50)
+                    (decrease (recursoAlmacenado Gas) 50)
                     (unidadEn ?uni ?loc))
                 )
             )
@@ -225,30 +209,17 @@
         :precondition
             (and
                 (not (investigado ?tipoU))  ; no esta  investigada
-                
-                (exists (?edi - Edificios ?loc - Localizaciones)
-                    (and (edificioEn ?edi ?loc)
-                    (edificioTipo ?edi BahiaDeIngenieria))  ; hay una bahia de ingenieria
-                )
-
-                (forall (?rec - tipoLocalizaciones)  ; para todos los recursos existentes
-                        (or
-                            (not (necesitaI ?tipoU ?rec))    ; o bien, no necesita el recurso
-                            (and (necesitaI ?tipoU ?rec)     ; o lo necesita
-                                 (generando ?rec))           ; pero lo esta generando
-                        )
-                    )
-                            
+                (investigacionDisponible)          
             )
         :effect
             ; Decrementamos la cantidad de recursos correspondiente a los distintos
             ; tipos de investigaciones
             (and
                 (when (and (= ?tipoU Segador)
-                           (>= (mineralAlmacenado) 50)
-                           (>= (gasAlmacenado) 200))
-                    (and (decrease (mineralAlmacenado) 50)
-                    (decrease (gasAlmacenado) 200)
+                           (>= (recursoAlmacenado Mineral) 50)
+                           (>= (recursoAlmacenado Gas) 200))
+                    (and (decrease (recursoAlmacenado Mineral) 50)
+                    (decrease (recursoAlmacenado Gas) 200)
                     (investigado ?tipoU))
                 )
             )
@@ -258,34 +229,20 @@
     ; RECOLECTAR. Recolecta los recursos de un nodo y los almacena
     ; ----------------------------------------------------------------------------- ;
     (:action Recolectar
-        :parameters (?loc - Localizaciones ?rec - tipoLocalizaciones)
+        :parameters (?rec - tipoLocalizaciones)
         :precondition
             (and
-                (exists (?vce - Unidades)               ; si existe una unidad vce
-                    (and (extrayendoEn ?vce ?loc)       ; extrayendo un recurso en una localizacion
-                    (asignadoRecursoEn ?rec ?loc))
-                )
+                (<= (+(recursoAlmacenado ?rec) 50) (capacidadMaxima))
             )
         :effect
             (and
                 ; Para todas las unidades creadas
                 (forall(?uni - Unidades)
                     ; si es un VCE que esta extrayendo mineral, incrementa el mineral almacenado en 10
-                    (when (and (= ?rec Mineral) (exists (?otraLoc - Localizaciones) (extrayendoEn ?uni ?otraLoc))
-                                (unidadTipo ?uni VCE)
+                    (when (and (extrayendoRecurso ?uni ?rec)
                                 ; (<= (mineralAlmacenado) (+ (capacidadMaxima) 10))
                           )
-                        (increase (mineralAlmacenado) 10)
-                    )
-                )
-                ; Para todas las unidades creadas
-                (forall(?uni - Unidades)
-                    ; si es un VCE que esta extrayendo gas, incrementa el gas almacenado en 10
-                    (when (and (= ?rec Gas) (exists (?otraLoc - Localizaciones) (extrayendoEn ?uni ?otraLoc))
-                                (unidadTipo ?uni VCE)
-                                ; (<= (gasAlmacenado) (+ (capacidadMaxima) 10))
-                          )
-                        (increase (gasAlmacenado) 10)
+                        (increase (recursoAlmacenado ?rec) 50)
                     )
                 )
             )
@@ -300,15 +257,11 @@
             (and
                 (extrayendoEn ?vce ?loc)         ; comprueba si esta extrayendo
                 (asignadoRecursoEn ?rec ?loc)    ; y que recurso esta generando
-                (generando ?rec)
             )
         :effect
             (and
-                (when (not (exists (?otroVce - Unidades ?otraLoc - Localizaciones)
-                            (extrayendoEn ?otroVce ?otraLoc) ))     ; si no hay otro vce generando
-                    (not (generando ?rec))                          ; elimina el predicado de la lista
-                )
-                (not (extrayendoEn ?vce ?loc))  ; desasigna el vce del recurso en el que estaba
+                (and (not (extrayendoEn ?vce ?loc))  ; desasigna el vce del recurso en el que estaba
+                (not (extrayendoRecurso ?vce ?rec)))
             )
     )
     

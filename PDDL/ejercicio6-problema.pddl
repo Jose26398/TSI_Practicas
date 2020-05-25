@@ -226,8 +226,8 @@
         (necesitaI Segador Gas)
         (necesitaI Segador Mineral)
 
-        (= (mineralAlmacenado) 0)
-        (= (gasAlmacenado) 0)
+        (= (recursoAlmacenado Mineral) 0)
+        (= (recursoAlmacenado Gas) 0)
         (= (capacidadMaxima) 100)
     )
     
