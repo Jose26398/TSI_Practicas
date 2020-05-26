@@ -29,14 +29,6 @@
 
         ; Indicar si un VCE esta extrayendo un recurso
         (extrayendoEn ?vce - Unidades ?loc - Localizaciones)
-        (generando ?rec - tipoLocalizaciones)
-
-        ; Recursos que necesita un edificio para ser construido
-        (necesitaE ?edi - tipoEdificios ?rec - tipoLocalizaciones)
-        ; Recursos que necesita una unidad para ser creada
-        (necesitaU ?uni - tipoUnidades ?rec - tipoLocalizaciones)
-        ; Recursos que necesita una unidad para ser investigada
-        (necesitaI ?tipoU - tipoUnidades ?rec - tipoLocalizaciones)
 
         ; Asociar la unidad con el edificio en la que es creada
         (entrena ?tipoE - tipoEdificios ?tipoU - tipoUnidades)
@@ -48,7 +40,8 @@
         (reclutada ?uni - Unidades)
         (extrayendoRecurso ?vce - Unidades ?rec - tipoLocalizaciones)
         (investigaciondisponible)
-)
+        (construido ?edi - Edificios)
+    )
 
     (:functions 
         (recursoAlmacenado ?rec - tipoLocalizaciones)
@@ -111,37 +104,42 @@
                 (unidadEn ?vce ?loc)            ; la unidad tiene que estar en la localizacion requerida
                 (not (extrayendoEn ?vce ?loc))  ; no puede estar ocupada extrayendo
                 (not (hayEdificio ?loc))
+                (not (construido ?edi))
             )
         :effect
             ; Decrementamos la cantidad de recursos correspondiente a los distintos
             ; tipos de edificios (excepto el deposito que tambien aumenta la capacidad)
             (and
-                (hayEdificio ?loc)
                 (when (and (edificioTipo ?edi CentroDeMando)
                            (>= (recursoAlmacenado Mineral) 150)
                            (>= (recursoAlmacenado Gas) 50))
                     (and (decrease (recursoAlmacenado Mineral) 150)
                     (decrease (recursoAlmacenado Gas) 50)
                     (edificioEn ?edi ?loc)
-                    (hayEdificio ?loc))
+                    (hayEdificio ?loc)
+                    (construido ?edi))
                 )
                 (when (and (edificioTipo ?edi Barracones)
                            (>= (recursoAlmacenado Mineral) 150))
                     (and (decrease (recursoAlmacenado Mineral) 150)
                     (edificioEn ?edi ?loc)
-                    (hayEdificio ?loc))
+                    (hayEdificio ?loc)
+                    (construido ?edi))
                 )
                 (when (and (edificioTipo ?edi Extractor)
                            (>= (recursoAlmacenado Mineral) 75))
                     (and (decrease (recursoAlmacenado Mineral) 75)
                     (edificioEn ?edi ?loc)
-                    (hayEdificio ?loc))
+                    (hayEdificio ?loc)
+                    (construido ?edi))
                 )
                 (when (and (edificioTipo ?edi BahiaDeIngenieria)
                            (>= (recursoAlmacenado Mineral) 125))
                     (and (decrease (recursoAlmacenado Mineral) 125)
                     (investigacionDisponible)
-                    (hayEdificio ?loc))
+                    (edificioEn ?edi ?loc)
+                    (hayEdificio ?loc)
+                    (construido ?edi))
                 )
                 (when (and (edificioTipo ?edi Deposito)
                            (>= (recursoAlmacenado Mineral) 75)
@@ -150,7 +148,8 @@
                     (decrease (recursoAlmacenado Gas) 25)
                     (increase (capacidadMaxima) 100)
                     (edificioEn ?edi ?loc)
-                    (hayEdificio ?loc))
+                    (hayEdificio ?loc)
+                    (construido ?edi))
                 )
                 ; Genera la unidad en la localizacion indicada
             )
@@ -180,23 +179,25 @@
             ; Decrementamos la cantidad de recursos correspondiente a los distintos
             ; tipos de unidades
             (and
-                (reclutada ?uni)
                 (when (and (unidadTipo ?uni VCE)
                            (>= (recursoAlmacenado Mineral) 50))
                     (and (decrease (recursoAlmacenado Mineral) 50)
-                    (unidadEn ?uni ?loc))
+                    (unidadEn ?uni ?loc)
+                    (reclutada ?uni))
                 )
                 (when (and (unidadTipo ?uni Marine)
                            (>= (recursoAlmacenado Mineral) 50))
                     (and (decrease (recursoAlmacenado Mineral) 50)
-                    (unidadEn ?uni ?loc))
+                    (unidadEn ?uni ?loc)
+                    (reclutada ?uni))
                 )
                 (when (and (unidadTipo ?uni Segador)
                            (>= (recursoAlmacenado Mineral) 50)
                            (>= (recursoAlmacenado Gas) 50))
                     (and (decrease (recursoAlmacenado Mineral) 50)
                     (decrease (recursoAlmacenado Gas) 50)
-                    (unidadEn ?uni ?loc))
+                    (unidadEn ?uni ?loc)
+                    (reclutada ?uni))
                 )
             )
     )
@@ -232,7 +233,7 @@
         :parameters (?rec - tipoLocalizaciones)
         :precondition
             (and
-                (<= (+(recursoAlmacenado ?rec) 50) (capacidadMaxima))
+                (<= (+(recursoAlmacenado ?rec) 25) (capacidadMaxima))
             )
         :effect
             (and
@@ -242,9 +243,12 @@
                     (when (and (extrayendoRecurso ?uni ?rec)
                                 ; (<= (mineralAlmacenado) (+ (capacidadMaxima) 10))
                           )
-                        (increase (recursoAlmacenado ?rec) 50)
+                        (increase (recursoAlmacenado ?rec) 25)
                     )
                 )
+                ; (when (> (recursoAlmacenado ?rec) (capacidadMaxima))
+                ;     (assign (recursoAlmacenado ?rec) (capacidadMaxima))
+                ; )
             )
     )
 
