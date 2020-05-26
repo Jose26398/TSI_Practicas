@@ -41,7 +41,8 @@
         (extrayendoRecurso ?vce - Unidades ?rec - tipoLocalizaciones)
         (investigaciondisponible)
         (construido ?edi - Edificios)
-    )
+        (puedeReclutarEn ?tipoU - tipoUnidades ?loc - Localizaciones)
+)
 
     (:functions 
         (recursoAlmacenado ?rec - tipoLocalizaciones)
@@ -116,6 +117,7 @@
                     (and (decrease (recursoAlmacenado Mineral) 150)
                     (decrease (recursoAlmacenado Gas) 50)
                     (edificioEn ?edi ?loc)
+                    (puedeReclutarEn VCE ?loc)
                     (hayEdificio ?loc)
                     (construido ?edi))
                 )
@@ -123,6 +125,8 @@
                            (>= (recursoAlmacenado Mineral) 150))
                     (and (decrease (recursoAlmacenado Mineral) 150)
                     (edificioEn ?edi ?loc)
+                    (puedeReclutarEn Marine ?loc)
+                    (puedeReclutarEn Segador ?loc)
                     (hayEdificio ?loc)
                     (construido ?edi))
                 )
@@ -168,12 +172,7 @@
                 (not (reclutada ?uni))
 
                 ; El tipo de unidad tiene que cumplir que
-                (exists
-                    (?edi - Edificios)
-                    (and
-                    (edificioEn ?edi ?loc)      ; exista un edificio que la entrene
-                    (edificioTipo ?edi ?tipoE))
-                )
+                (puedeReclutarEn ?tipoU ?loc)
             )
         :effect
             ; Decrementamos la cantidad de recursos correspondiente a los distintos
