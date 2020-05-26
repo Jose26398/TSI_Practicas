@@ -31,7 +31,7 @@
         (extrayendoEn ?vce - Unidades ?loc - Localizaciones)
 
         ; Asociar la unidad con el edificio en la que es creada
-        (entrena ?tipoE - tipoEdificios ?tipoU - tipoUnidades)
+        ; (entrena ?tipoE - tipoEdificios ?tipoU - tipoUnidades)
         ; Indica si la unidad ya esta investigada
         (investigado ?tipoU - tipoUnidades)
         
@@ -166,7 +166,6 @@
         :parameters (?tipoU - tipoUnidades ?uni - Unidades ?tipoE - tipoEdificios ?loc - Localizaciones)
         :precondition
             (and
-                (entrena ?tipoE ?tipoU)     ; vemos que edificio entrena a la unidad
                 (unidadTipo ?uni ?tipoU)
                 (investigado ?tipoU)        ; la unidad ya ha sido investigada
                 (not (reclutada ?uni))
@@ -232,7 +231,7 @@
         :parameters (?rec - tipoLocalizaciones)
         :precondition
             (and
-                (<= (+(recursoAlmacenado ?rec) 25) (capacidadMaxima))
+                (<= (+(recursoAlmacenado ?rec) 20) (capacidadMaxima))
             )
         :effect
             (and
@@ -242,7 +241,7 @@
                     (when (and (extrayendoRecurso ?uni ?rec)
                                 ; (<= (mineralAlmacenado) (+ (capacidadMaxima) 10))
                           )
-                        (increase (recursoAlmacenado ?rec) 25)
+                        (increase (recursoAlmacenado ?rec) 20)
                     )
                 )
                 ; (when (> (recursoAlmacenado ?rec) (capacidadMaxima))

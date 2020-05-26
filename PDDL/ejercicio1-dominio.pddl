@@ -66,7 +66,7 @@
             )
         :effect 
             (and
-                (and (extrayendoEn ?vce ?loc)    ; asignar al VCE en la localizacion del recurso
+                (and (extrayendoEn ?vce ?loc))   ; asignar al VCE en la localizacion del recurso
             )
     )
 

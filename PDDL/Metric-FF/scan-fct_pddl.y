@@ -1,26 +1,3 @@
-
-
-/*********************************************************************
- * (C) Copyright 2002 Albert Ludwigs University Freiburg
- *     Institute of Computer Science
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
- *********************************************************************/
-
-
 %{
 #ifdef YYDEBUG
   extern int yydebug=1;
@@ -32,6 +9,10 @@
 #include "ff.h"
 #include "memory.h"
 #include "parse.h"
+
+#ifndef YYMAXDEPTH
+#define YYMAXDEPTH 10000000
+#endif
 
 
 #ifndef SCAN_ERR
@@ -287,7 +268,8 @@ OPEN_PAREN  METRIC_TOK  NAME ground_f_exp CLOSE_PAREN
     exit( 1 );
   }
 
-  gparse_optimization = $3;
+  gparse_optimization = malloc(strlen($3) + 1);
+  strncpy(gparse_optimization, $3, strlen($3) + 1);
   gparse_metric = $4;
 
 }
@@ -701,7 +683,6 @@ NAME  name_plus
   strcpy($$->item, $1);
   $$->next = $2;
 }
-;
 
 
 /**********************************************************************/
@@ -812,7 +793,6 @@ literal_name literal_name_plus
    $$ = $1;
    $$->next = $2;
 }
-;
 
  
 /**********************************************************************/

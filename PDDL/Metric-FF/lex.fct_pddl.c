@@ -821,37 +821,18 @@ int yy_flex_debug = 0;
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
 #line 1 "lex-fct_pddl.l"
-/*********************************************************************
- * (C) Copyright 2002 Albert Ludwigs University Freiburg
- *     Institute of Computer Science
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
- *********************************************************************/
-#line 24 "lex-fct_pddl.l"
+#line 2 "lex-fct_pddl.l"
 #include "ff.h"
 #include "parse.h"
   
   /* default yywrap function - always treat EOF as an EOF  */
-int fct_pddlwrap() { return 1; }; 
+int fct_pddlwrap() { return 1; };
 
 int gbracket_count = 0;
 
-#line 853 "lex.fct_pddl.c"
+#line 834 "lex.fct_pddl.c"
 
-#line 855 "lex.fct_pddl.c"
+#line 836 "lex.fct_pddl.c"
 
 #define INITIAL 0
 #define COMMENT 1
@@ -1070,10 +1051,10 @@ YY_DECL
 		}
 
 	{
-#line 63 "lex-fct_pddl.l"
+#line 41 "lex-fct_pddl.l"
 
 
-#line 1077 "lex.fct_pddl.c"
+#line 1058 "lex.fct_pddl.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1132,248 +1113,248 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 65 "lex-fct_pddl.l"
+#line 43 "lex-fct_pddl.l"
 { return(OPEN_PAREN); }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 67 "lex-fct_pddl.l"
+#line 45 "lex-fct_pddl.l"
 {  return(CLOSE_PAREN); }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 69 "lex-fct_pddl.l"
+#line 47 "lex-fct_pddl.l"
 {  gbracket_count = 1;
  BEGIN OVERREAD; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 72 "lex-fct_pddl.l"
+#line 50 "lex-fct_pddl.l"
 {  gbracket_count = 1;
  BEGIN OVERREAD; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 75 "lex-fct_pddl.l"
+#line 53 "lex-fct_pddl.l"
 {  gbracket_count = 1;
  BEGIN OVERREAD; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 78 "lex-fct_pddl.l"
+#line 56 "lex-fct_pddl.l"
 {  return(DEFINE_TOK); }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 80 "lex-fct_pddl.l"
+#line 58 "lex-fct_pddl.l"
 {  return(PROBLEM_TOK); }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 82 "lex-fct_pddl.l"
+#line 60 "lex-fct_pddl.l"
 {  return(SITUATION_TOK); }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 84 "lex-fct_pddl.l"
+#line 62 "lex-fct_pddl.l"
 {  return(BSITUATION_TOK); }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 86 "lex-fct_pddl.l"
+#line 64 "lex-fct_pddl.l"
 {  return(OBJECTS_TOK); }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 88 "lex-fct_pddl.l"
+#line 66 "lex-fct_pddl.l"
 {  return(GOAL_TOK); }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 90 "lex-fct_pddl.l"
+#line 68 "lex-fct_pddl.l"
 {  return(METRIC_TOK); }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 92 "lex-fct_pddl.l"
+#line 70 "lex-fct_pddl.l"
 {  return(INIT_TOK); }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 94 "lex-fct_pddl.l"
+#line 72 "lex-fct_pddl.l"
 {  return(BDOMAIN_TOK); }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 96 "lex-fct_pddl.l"
+#line 74 "lex-fct_pddl.l"
 {  gbracket_count = 1;
  BEGIN OVERREAD; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 99 "lex-fct_pddl.l"
+#line 77 "lex-fct_pddl.l"
 {  return(AND_TOK); }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 101 "lex-fct_pddl.l"
+#line 79 "lex-fct_pddl.l"
 {  return(IMPLY_TOK); }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 103 "lex-fct_pddl.l"
+#line 81 "lex-fct_pddl.l"
 {  return(OR_TOK); }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 105 "lex-fct_pddl.l"
+#line 83 "lex-fct_pddl.l"
 {  return(FORALL_TOK); }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 107 "lex-fct_pddl.l"
+#line 85 "lex-fct_pddl.l"
 {  return(EXISTS_TOK); }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 109 "lex-fct_pddl.l"
+#line 87 "lex-fct_pddl.l"
 {  return(NOT_TOK); }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 111 "lex-fct_pddl.l"
+#line 89 "lex-fct_pddl.l"
 {  return(LE_TOK); }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 113 "lex-fct_pddl.l"
+#line 91 "lex-fct_pddl.l"
 {  return(LEQ_TOK); }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 115 "lex-fct_pddl.l"
+#line 93 "lex-fct_pddl.l"
 {  return(EQ_TOK); }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 117 "lex-fct_pddl.l"
+#line 95 "lex-fct_pddl.l"
 {  return(GEQ_TOK); }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 119 "lex-fct_pddl.l"
+#line 97 "lex-fct_pddl.l"
 {  return(GE_TOK); }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 121 "lex-fct_pddl.l"
+#line 99 "lex-fct_pddl.l"
 {  return(MINUS_TOK); }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 123 "lex-fct_pddl.l"
+#line 101 "lex-fct_pddl.l"
 {  return(AD_TOK); }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 125 "lex-fct_pddl.l"
+#line 103 "lex-fct_pddl.l"
 {  return(MU_TOK); }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 127 "lex-fct_pddl.l"
+#line 105 "lex-fct_pddl.l"
 {  return(DI_TOK); }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 129 "lex-fct_pddl.l"
+#line 107 "lex-fct_pddl.l"
 { strupcase( yytext );  
   strcpy(yylval.string, yytext ); return(NAME); }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 132 "lex-fct_pddl.l"
+#line 110 "lex-fct_pddl.l"
 {strupcase( yytext );
  strcpy(yylval.string, yytext); return(VARIABLE); }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 135 "lex-fct_pddl.l"
+#line 113 "lex-fct_pddl.l"
 { strcpy(yylval.string, yytext); return(NUM);}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 137 "lex-fct_pddl.l"
+#line 115 "lex-fct_pddl.l"
 { return(EITHER_TOK); }
 	YY_BREAK
 case 35:
 /* rule 35 can match eol */
 YY_RULE_SETUP
-#line 139 "lex-fct_pddl.l"
+#line 117 "lex-fct_pddl.l"
 {  lineno++; } 
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 140 "lex-fct_pddl.l"
+#line 118 "lex-fct_pddl.l"
 {  /* this will hold only in files that end with
 		   a comment but no linefeed */ } 
 	YY_BREAK
 case 37:
 /* rule 37 can match eol */
 YY_RULE_SETUP
-#line 143 "lex-fct_pddl.l"
+#line 121 "lex-fct_pddl.l"
 {  lineno++; }  ;
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 145 "lex-fct_pddl.l"
+#line 123 "lex-fct_pddl.l"
 { BEGIN COMMENT;}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 147 "lex-fct_pddl.l"
+#line 125 "lex-fct_pddl.l"
 { BEGIN INITIAL;}
 	YY_BREAK
 case 40:
 /* rule 40 can match eol */
 YY_RULE_SETUP
-#line 149 "lex-fct_pddl.l"
+#line 127 "lex-fct_pddl.l"
 {  lineno++; } 
 	YY_BREAK
 case 41:
 /* rule 41 can match eol */
 YY_RULE_SETUP
-#line 151 "lex-fct_pddl.l"
+#line 129 "lex-fct_pddl.l"
 {  lineno++; }
 	YY_BREAK
 case 42:
 /* rule 42 can match eol */
 YY_RULE_SETUP
-#line 153 "lex-fct_pddl.l"
+#line 131 "lex-fct_pddl.l"
 {  }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 155 "lex-fct_pddl.l"
+#line 133 "lex-fct_pddl.l"
 {  gbracket_count++; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 157 "lex-fct_pddl.l"
+#line 135 "lex-fct_pddl.l"
 {  gbracket_count--; 
   if (!gbracket_count) BEGIN INITIAL; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 160 "lex-fct_pddl.l"
+#line 138 "lex-fct_pddl.l"
 {}
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 161 "lex-fct_pddl.l"
+#line 139 "lex-fct_pddl.l"
 ECHO;
 	YY_BREAK
-#line 1377 "lex.fct_pddl.c"
+#line 1358 "lex.fct_pddl.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(COMMENT):
 case YY_STATE_EOF(OVERREAD):
@@ -2380,6 +2361,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 161 "lex-fct_pddl.l"
+#line 139 "lex-fct_pddl.l"
 
 

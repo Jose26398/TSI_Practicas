@@ -1,31 +1,9 @@
-
-
-/*********************************************************************
- * (C) Copyright 2002 Albert Ludwigs University Freiburg
- *     Institute of Computer Science
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
- *********************************************************************/
-
 %{
 #include "ff.h"
 #include "parse.h"
 
 /* default yywrap function - always treat EOF as an EOF  */
-int ops_pddlwrap() { return 1; }; 
+int ops_pddlwrap() { return 1; };
 
 %}
 
@@ -81,6 +59,8 @@ z [Zz]
 ":"{f}{u}{n}{c}{t}{i}{o}{n}{s}  { return(FUNCTIONS_TOK); }
 
 ":"{a}{c}{t}{i}{o}{n}  {  return(ACTION_TOK); }
+
+":"{d}{e}{r}{i}{v}{e}{d}  {  return(AXIOM_TOK); }
 
 ":"{p}{a}{r}{a}{m}{e}{t}{e}{r}{s}  {  return(PARAMETERS_TOK); }
 

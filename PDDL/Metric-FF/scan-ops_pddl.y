@@ -1,26 +1,3 @@
-
-
-/*********************************************************************
- * (C) Copyright 2002 Albert Ludwigs University Freiburg
- *     Institute of Computer Science
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
- *********************************************************************/
-
-
 %{
 #ifdef YYDEBUG
   extern int yydebug=1;
@@ -32,6 +9,10 @@
 #include "ff.h"
 #include "memory.h"
 #include "parse.h"
+
+#ifndef YYMAXDEPTH
+#define YYMAXDEPTH 10000000
+#endif
 
 
 #ifndef SCAN_ERR
@@ -108,7 +89,7 @@ int supported( char *str )
   char * sup[] = { ":STRIPS", ":NEGATION", ":EQUALITY",":TYPING", 
 		   ":CONDITIONAL-EFFECTS", ":NEGATIVE-PRECONDITIONS", ":DISJUNCTIVE-PRECONDITIONS", 
 		   ":EXISTENTIAL-PRECONDITIONS", ":UNIVERSAL-PRECONDITIONS", 
-		   ":QUANTIFIED-PRECONDITIONS", ":ADL", ":FLUENTS", ":ACTION-COSTS",
+		   ":QUANTIFIED-PRECONDITIONS", ":ADL", ":FLUENTS", ":ACTION-COSTS", ":DERIVED-PREDICATES",
 		   NULL };     
 
   for (i=0; NULL != sup[i]; i++) {
@@ -165,6 +146,7 @@ int supported( char *str )
 %token PREDICATES_TOK
 %token FUNCTIONS_TOK
 %token ACTION_TOK
+%token AXIOM_TOK
 %token VARS_TOK
 %token IMPLIES_TOK
 %token PRECONDITION_TOK
@@ -248,6 +230,8 @@ predicates_def  optional_domain_defs
 functions_def  optional_domain_defs
 |
 action_def  optional_domain_defs
+|
+axiom_def  optional_domain_defs
 ;
 
 
@@ -427,9 +411,54 @@ OPEN_PAREN  ACTION_TOK
 NAME
 { 
   scur_op = new_PlOperator( $4 );
+  scur_op->axiom = FALSE;
 }
 param_def  action_def_body  CLOSE_PAREN
 {
+  scur_op->next = gloaded_ops;
+  gloaded_ops = scur_op; 
+}
+;
+
+
+/**********************************************************************
+ * axioms
+ **********************************************************************/
+axiom_def:
+OPEN_PAREN  AXIOM_TOK OPEN_PAREN  predicate  typed_list_variable CLOSE_PAREN adl_goal_description CLOSE_PAREN
+{ 
+  PlNode *pln;
+  TypedList *tyl;
+  TokenList *tmp, *prev;
+
+  pln = new_PlNode(ATOM);
+  tmp = new_TokenList();
+  tmp->item = new_Token( strlen( $4 )+1 ); 
+  strcpy( tmp->item, $4 );
+  pln->atom = tmp;
+
+  scur_op = new_PlOperator( $4 );
+  scur_op->axiom = TRUE;
+  scur_op->effects = pln;
+
+  scur_op->preconds = $7;
+
+  scur_op->params = NULL;
+  scur_op->parse_params = $5;
+  prev = pln->atom;
+  for (tyl = scur_op->parse_params; tyl; tyl = tyl->next) {
+    /* to be able to distinguish params from :VARS 
+     */
+    scur_op->number_of_real_params++;
+
+    tmp = new_TokenList();
+    tmp->item = new_Token( strlen( tyl->name )+1 ); 
+    strcpy( tmp->item, tyl->name );
+    prev->next = tmp;
+    prev = tmp;
+    
+  }
+  
   scur_op->next = gloaded_ops;
   gloaded_ops = scur_op; 
 }
@@ -454,7 +483,6 @@ PARAMETERS_TOK  OPEN_PAREN  typed_list_variable  CLOSE_PAREN
   }
 }
 ;
-
 
 /**********************************************************************/
 action_def_body:
@@ -625,7 +653,6 @@ adl_goal_description  adl_goal_description_star
   $$ = $1;
 }
 ;
-
 
 /**********************************************************************
  * effects as allowed in pddl are saved in FF data structures
@@ -884,7 +911,6 @@ NAME  name_plus
   $$->next = $2;
 }
 ;
-
 
 /**********************************************************************/
 predicate:

@@ -197,6 +197,7 @@
         (existeCamino loc5_4 loc5_5)
 
         (edificioEn mando1 loc2_2)
+        (puedeReclutarEn VCE loc2_2)
         (hayEdificio loc2_2)
         (unidadEn vce1 loc2_2)
         (reclutada vce1)
@@ -207,10 +208,6 @@
 
         (asignadoRecursoEn Gas loc3_4)
         (asignadoRecursoEn Gas loc3_5)
-
-        (entrena CentroDeMando VCE)
-        (entrena Barracones Marine)
-        (entrena Barracones Segador)
 
         (investigado VCE)
         (investigado Marine)
@@ -223,8 +220,8 @@
     (:goal
         (and
             (unidadEn marine1 loc1_1)
-            ; (unidadEn marine2 loc5_1)
-            ; (unidadEn segador1 loc5_1)
+            (unidadEn marine2 loc5_1)
+            (unidadEn segador1 loc5_1)
             ; (unidadEn vce2 loc5_5)
         )
     )
