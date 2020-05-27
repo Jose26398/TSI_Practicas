@@ -30,18 +30,29 @@
         ; Indicar si un VCE esta extrayendo un recurso
         (extrayendoEn ?vce - Unidades ?loc - Localizaciones)
 
-        ; Asociar la unidad con el edificio en la que es creada
-        ; (entrena ?tipoE - tipoEdificios ?tipoU - tipoUnidades)
         ; Indica si la unidad ya esta investigada
         (investigado ?tipoU - tipoUnidades)
         
         
+        ; MEJORAS DE OPTIMIZACION ;
+        
+        ; Indica si hay un edificio construido en una localizacion
         (hayEdificio ?loc - Localizaciones)
-        (reclutada ?uni - Unidades)
-        (extrayendoRecurso ?vce - Unidades ?rec - tipoLocalizaciones)
-        (investigaciondisponible)
+
+        ; Edificios que han sido construidos
         (construido ?edi - Edificios)
+
+        ; Unidades que han sido reclutadas
+        (reclutada ?uni - Unidades)
+
+        ; Unidades que puede reclutar un tipo de edificio
         (puedeReclutarEn ?tipoU - tipoUnidades ?loc - Localizaciones)
+
+        ; Recurso que esta extrayendo un VCE determinado
+        (extrayendoRecurso ?vce - Unidades ?rec - tipoLocalizaciones)
+
+        ; Indica si hay una bahia de ingenieria disponible para investigar
+        (investigaciondisponible)
 )
 
     (:functions 
@@ -71,7 +82,7 @@
     ; ASIGNAR. Pone a un VCE a extrear recursos de un nodo
     ; ----------------------------------------------------------------------------- ;
     (:action Asignar
-        :parameters (?vce - Unidades ?loc - Localizaciones ?rec - tipoLocalizaciones ?ext - Edificios)
+        :parameters (?vce - Unidades ?loc - Localizaciones ?rec - tipoLocalizaciones)
         :precondition 
             (and
                 (unidadTipo ?vce VCE)           ; la unidad tiene que ser un VCE
@@ -84,9 +95,11 @@
         :effect 
             (and
                 (when (or
-                        (not (= ?rec Gas))              ; si no es un nodo de Gas
-                        (and (edificioEn ?ext ?loc)     ; o si hay un Extractor en la localizacion
-                        (edificioTipo ?ext Extractor))
+                        (not (= ?rec Gas))                  ; si no es un nodo de Gas
+                        (exists (?ext - Edificios)          ; o si existe
+                            (and (edificioEn ?ext ?loc)     ; un Extractor en la localizacion
+                            (edificioTipo ?ext Extractor))
+                        )
                     )
                     (and (extrayendoEn ?vce ?loc)   ; entonces asigna al VCE en la localizacion del recurso
                     (extrayendoRecurso ?vce ?rec))
@@ -104,58 +117,72 @@
                 (unidadTipo ?vce VCE)           ; la unidad tiene que ser un VCE
                 (unidadEn ?vce ?loc)            ; la unidad tiene que estar en la localizacion requerida
                 (not (extrayendoEn ?vce ?loc))  ; no puede estar ocupada extrayendo
-                (not (hayEdificio ?loc))
-                (not (construido ?edi))
+                (not (hayEdificio ?loc))        ; no puede haber un edificio en esa localizacion
+                (not (construido ?edi))         ; el edificio a construir no puede estar ya construido
             )
         :effect
             ; Decrementamos la cantidad de recursos correspondiente a los distintos
             ; tipos de edificios (excepto el deposito que tambien aumenta la capacidad)
             (and
-                (when (and (edificioTipo ?edi CentroDeMando)
-                           (>= (recursoAlmacenado Mineral) 150)
-                           (>= (recursoAlmacenado Gas) 50))
+                (when
+                    (and (edificioTipo ?edi CentroDeMando)
+                        (>= (recursoAlmacenado Mineral) 150)
+                        (>= (recursoAlmacenado Gas) 50)
+                    )
                     (and (decrease (recursoAlmacenado Mineral) 150)
-                    (decrease (recursoAlmacenado Gas) 50)
-                    (edificioEn ?edi ?loc)
-                    (puedeReclutarEn VCE ?loc)
-                    (hayEdificio ?loc)
-                    (construido ?edi))
+                         (decrease (recursoAlmacenado Gas) 50)
+                         (puedeReclutarEn VCE ?loc)     ; unidad que se puede reclutar en ese edificio
+
+                         ; Se construye el edificio correspondiente
+                         (edificioEn ?edi ?loc) (hayEdificio ?loc) (construido ?edi))
                 )
-                (when (and (edificioTipo ?edi Barracones)
-                           (>= (recursoAlmacenado Mineral) 150))
+
+                (when
+                    (and (edificioTipo ?edi Barracones)
+                        (>= (recursoAlmacenado Mineral) 150)
+                    )
                     (and (decrease (recursoAlmacenado Mineral) 150)
-                    (edificioEn ?edi ?loc)
-                    (puedeReclutarEn Marine ?loc)
-                    (puedeReclutarEn Segador ?loc)
-                    (hayEdificio ?loc)
-                    (construido ?edi))
+                         (puedeReclutarEn Marine ?loc)     ; unidades que se pueden reclutar en ese edificio
+                         (puedeReclutarEn Segador ?loc)
+
+                         ; Se construye el edificio correspondiente
+                         (edificioEn ?edi ?loc) (hayEdificio ?loc) (construido ?edi))
                 )
-                (when (and (edificioTipo ?edi Extractor)
-                           (>= (recursoAlmacenado Mineral) 75))
+
+                (when
+                    (and (edificioTipo ?edi Extractor)
+                        (>= (recursoAlmacenado Mineral) 75)
+                    )
                     (and (decrease (recursoAlmacenado Mineral) 75)
-                    (edificioEn ?edi ?loc)
-                    (hayEdificio ?loc)
-                    (construido ?edi))
+
+                         ; Se construye el edificio correspondiente                    
+                         (edificioEn ?edi ?loc) (hayEdificio ?loc) (construido ?edi))
                 )
-                (when (and (edificioTipo ?edi BahiaDeIngenieria)
-                           (>= (recursoAlmacenado Mineral) 125))
+
+                (when
+                    (and (edificioTipo ?edi BahiaDeIngenieria)
+                        (>= (recursoAlmacenado Mineral) 125)
+                    )
                     (and (decrease (recursoAlmacenado Mineral) 125)
-                    (investigacionDisponible)
-                    (edificioEn ?edi ?loc)
-                    (hayEdificio ?loc)
-                    (construido ?edi))
+                         (investigacionDisponible)   ; ya se puede investigar
+                         
+                         ; Se construye el edificio correspondiente
+                         (edificioEn ?edi ?loc) (hayEdificio ?loc) (construido ?edi))
                 )
-                (when (and (edificioTipo ?edi Deposito)
-                           (>= (recursoAlmacenado Mineral) 75)
-                           (>= (recursoAlmacenado Gas) 25))
+
+                (when 
+                    (and (edificioTipo ?edi Deposito)
+                        (>= (recursoAlmacenado Mineral) 75)
+                        (>= (recursoAlmacenado Gas) 25)
+                    )
                     (and (decrease (recursoAlmacenado Mineral) 75)
-                    (decrease (recursoAlmacenado Gas) 25)
-                    (increase (capacidadMaxima) 100)
-                    (edificioEn ?edi ?loc)
-                    (hayEdificio ?loc)
-                    (construido ?edi))
+                         (decrease (recursoAlmacenado Gas) 25)
+                         (increase (capacidadMaxima) 100)
+
+                         ; Se construye el edificio correspondiente
+                         (edificioEn ?edi ?loc) (hayEdificio ?loc) (construido ?edi))
                 )
-                ; Genera la unidad en la localizacion indicada
+                
             )
     )
 
@@ -163,41 +190,51 @@
     ; RECLUTAR. Crea nuevas unidades
     ; ----------------------------------------------------------------------------- ;
     (:action Reclutar
-        :parameters (?tipoU - tipoUnidades ?uni - Unidades ?tipoE - tipoEdificios ?loc - Localizaciones)
+        :parameters (?tipoU - tipoUnidades ?uni - Unidades ?loc - Localizaciones)
         :precondition
             (and
-                (unidadTipo ?uni ?tipoU)
-                (investigado ?tipoU)        ; la unidad ya ha sido investigada
-                (not (reclutada ?uni))
-
-                ; El tipo de unidad tiene que cumplir que
-                (puedeReclutarEn ?tipoU ?loc)
+                (unidadTipo ?uni ?tipoU)        ; obtenemos el tipo de la unidad
+                (puedeReclutarEn ?tipoU ?loc)   ; comprobamos que el edificio que la recluta esta disponible
+                (investigado ?tipoU)            ; la unidad ya ha sido investigada
+                (not (reclutada ?uni))          ; y no ha sido reclutada previamente
             )
         :effect
             ; Decrementamos la cantidad de recursos correspondiente a los distintos
             ; tipos de unidades
             (and
-                (when (and (unidadTipo ?uni VCE)
-                           (>= (recursoAlmacenado Mineral) 50))
+                (when
+                    (and (unidadTipo ?uni VCE)
+                         (>= (recursoAlmacenado Mineral) 50)
+                    )
                     (and (decrease (recursoAlmacenado Mineral) 50)
-                    (unidadEn ?uni ?loc)
-                    (reclutada ?uni))
+                         (unidadEn ?uni ?loc)   ; reclutamos la unidad
+                         (reclutada ?uni)
+                    )
                 )
-                (when (and (unidadTipo ?uni Marine)
-                           (>= (recursoAlmacenado Mineral) 50))
+
+                (when
+                    (and (unidadTipo ?uni Marine)
+                         (>= (recursoAlmacenado Mineral) 50)
+                    )
                     (and (decrease (recursoAlmacenado Mineral) 50)
-                    (unidadEn ?uni ?loc)
-                    (reclutada ?uni))
+                         (unidadEn ?uni ?loc)   ; reclutamos la unidad
+                         (reclutada ?uni)
+                    )
                 )
-                (when (and (unidadTipo ?uni Segador)
-                           (>= (recursoAlmacenado Mineral) 50)
-                           (>= (recursoAlmacenado Gas) 50))
+
+                (when
+                    (and (unidadTipo ?uni Segador)
+                         (>= (recursoAlmacenado Mineral) 50)
+                         (>= (recursoAlmacenado Gas) 50)
+                    )
                     (and (decrease (recursoAlmacenado Mineral) 50)
-                    (decrease (recursoAlmacenado Gas) 50)
-                    (unidadEn ?uni ?loc)
-                    (reclutada ?uni))
+                         (decrease (recursoAlmacenado Gas) 50)
+                         (unidadEn ?uni ?loc)   ; recluta la unidad
+                         (reclutada ?uni)
+                    )
                 )
             )
+    
     )
 
     ; ----------------------------------------------------------------------------- ;
@@ -208,18 +245,21 @@
         :precondition
             (and
                 (not (investigado ?tipoU))  ; no esta  investigada
-                (investigacionDisponible)          
+                (investigacionDisponible)   ; se puede investigar       
             )
         :effect
             ; Decrementamos la cantidad de recursos correspondiente a los distintos
             ; tipos de investigaciones
             (and
-                (when (and (= ?tipoU Segador)
-                           (>= (recursoAlmacenado Mineral) 50)
-                           (>= (recursoAlmacenado Gas) 200))
+                (when
+                    (and (= ?tipoU Segador)
+                         (>= (recursoAlmacenado Mineral) 50)
+                         (>= (recursoAlmacenado Gas) 200)
+                    )
                     (and (decrease (recursoAlmacenado Mineral) 50)
-                    (decrease (recursoAlmacenado Gas) 200)
-                    (investigado ?tipoU))
+                         (decrease (recursoAlmacenado Gas) 200)
+                         (investigado ?tipoU)   ; investiga la unidad
+                    )
                 )
             )
     )
@@ -231,22 +271,18 @@
         :parameters (?rec - tipoLocalizaciones)
         :precondition
             (and
+                ; La recoleccion no sobrepasaria la capacidad maxima del almacenamiento
                 (<= (+(recursoAlmacenado ?rec) 20) (capacidadMaxima))
             )
         :effect
             (and
-                ; Para todas las unidades creadas
-                (forall(?uni - Unidades)
-                    ; si es un VCE que esta extrayendo mineral, incrementa el mineral almacenado en 10
-                    (when (and (extrayendoRecurso ?uni ?rec)
-                                ; (<= (mineralAlmacenado) (+ (capacidadMaxima) 10))
-                          )
+                (forall(?uni - Unidades)    ; para todas las unidades creadas
+
+                    ; Si es un VCE que esta extrayendo, incrementa su recurso almacenado en 20
+                    (when (extrayendoRecurso ?uni ?rec)
                         (increase (recursoAlmacenado ?rec) 20)
                     )
                 )
-                ; (when (> (recursoAlmacenado ?rec) (capacidadMaxima))
-                ;     (assign (recursoAlmacenado ?rec) (capacidadMaxima))
-                ; )
             )
     )
 

@@ -1,6 +1,8 @@
 (define (problem starcraft)
     (:domain ejercicio6)
+
     (:objects 
+        ; Declaracion de variables
         loc1_1 loc1_2 loc1_3 loc1_4 loc1_5 loc2_1 loc2_2 loc2_3 loc2_4 loc2_5 loc3_1 loc3_2 loc3_3 loc3_4 loc3_5 loc4_1 loc4_2 loc4_3 loc4_4 loc4_5 loc5_1 loc5_2 loc5_3 loc5_4 loc5_5 - Localizaciones
         
         mando1 - Edificios
@@ -13,8 +15,9 @@
         extractor1 extractor2 - Edificios
         bahia1 deposito1 - Edificios
     )
+
     (:init
-        (edificioTipo mando1 CentroDeMando)
+        ; Tipos de cada una de las unidades 
         (unidadTipo vce1 VCE)
         (unidadTipo vce2 VCE)
         (unidadTipo vce3 VCE)
@@ -22,19 +25,22 @@
         (unidadTipo marine2 Marine)
         (unidadTipo segador1 Segador)
 
+        ; Tipos de cada una de las localizaciones
         (localizacionTipo mineral1 Mineral)
         (localizacionTipo mineral2 Mineral)
         (localizacionTipo mineral3 Mineral)
         (localizacionTipo gas1 Gas)
         (localizacionTipo gas2 Gas)
 
+        ; Tipos de cada una de las unidades
+        (edificioTipo mando1 CentroDeMando)
         (edificioTipo barracon1 Barracones)
         (edificioTipo extractor1 Extractor)
         (edificioTipo extractor2 Extractor)
         (edificioTipo bahia1 BahiaDeIngenieria)
         (edificioTipo deposito1 Deposito)
 
-
+        ; Declaracion del grid
         (existeCamino loc1_1 loc2_1)
         (existeCamino loc2_1 loc1_1)
         (existeCamino loc1_1 loc1_2)
@@ -196,6 +202,7 @@
         (existeCamino loc5_5 loc5_4)
         (existeCamino loc5_4 loc5_5)
 
+        ; Situacion inicial de los edificios, unidades y recursos
         (edificioEn mando1 loc2_2)
         (puedeReclutarEn VCE loc2_2)
         (hayEdificio loc2_2)
@@ -212,6 +219,7 @@
         (investigado VCE)
         (investigado Marine)
 
+        ; Caracteristicas iniciales del almacenamiento
         (= (recursoAlmacenado Mineral) 0)
         (= (recursoAlmacenado Gas) 0)
         (= (capacidadMaxima) 100)
@@ -222,7 +230,6 @@
             (unidadEn marine1 loc1_1)
             (unidadEn marine2 loc5_1)
             (unidadEn segador1 loc5_1)
-            ; (unidadEn vce2 loc5_5)
         )
     )
 )

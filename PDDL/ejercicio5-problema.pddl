@@ -1,10 +1,11 @@
 (define (problem starcraft)
     (:domain ejercicio5)
     (:objects 
+        ; Declaracion de variables
         loc1_1 loc1_2 loc1_3 loc1_4 loc1_5 loc2_1 loc2_2 loc2_3 loc2_4 loc2_5 loc3_1 loc3_2 loc3_3 loc3_4 loc3_5 loc4_1 loc4_2 loc4_3 loc4_4 loc4_5 loc5_1 loc5_2 loc5_3 loc5_4 loc5_5 - Localizaciones
         
         mando1 - Edificios
-        vce1 vce2 vce3 vce4 vce5 vce6 vce7 vce8 vce9 vce10 vce11 vce12 vce13 vce14 vce15 marine1 marine2 segador1 - Unidades
+        vce1 vce2 vce3 marine1 marine2 segador1 - Unidades
 
         mineral1 mineral2 mineral3 - Localizaciones
         gas1 gas2 - Localizaciones
@@ -13,8 +14,9 @@
         extractor1 - Edificios
         bahia1 - Edificios
     )
+
     (:init
-        (edificioTipo mando1 CentroDeMando)
+        ; Tipos de cada una de las unidades 
         (unidadTipo vce1 VCE)
         (unidadTipo vce2 VCE)
         (unidadTipo vce3 VCE)
@@ -22,17 +24,20 @@
         (unidadTipo marine2 Marine)
         (unidadTipo segador1 Segador)
 
+        ; Tipos de cada una de las localizaciones
         (localizacionTipo mineral1 Mineral)
         (localizacionTipo mineral2 Mineral)
         (localizacionTipo mineral3 Mineral)
         (localizacionTipo gas1 Gas)
         (localizacionTipo gas2 Gas)
 
+        ; Tipos de cada una de las unidades
+        (edificioTipo mando1 CentroDeMando)
         (edificioTipo barracon1 Barracones)
         (edificioTipo extractor1 Extractor)
         (edificioTipo bahia1 BahiaDeIngenieria)
 
-
+        ; Declaracion del grid
         (existeCamino loc1_1 loc2_1)
         (existeCamino loc2_1 loc1_1)
         (existeCamino loc1_1 loc1_2)
@@ -194,6 +199,7 @@
         (existeCamino loc5_5 loc5_4)
         (existeCamino loc5_4 loc5_5)
 
+        ; Situacion inicial de los edificios, unidades y recursos
         (edificioEn mando1 loc2_2)
         (unidadEn vce1 loc2_2)
 
@@ -232,7 +238,6 @@
             (unidadEn marine1 loc1_5)
             (unidadEn marine2 loc5_1)
             (unidadEn segador1 loc5_1)
-            ; (unidadEn vce2 loc5_5)
         )
     )
 )

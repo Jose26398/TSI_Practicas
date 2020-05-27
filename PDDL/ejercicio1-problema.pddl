@@ -1,6 +1,7 @@
 (define (problem starcraft)
     (:domain ejercicio1)
     (:objects 
+        ; Declaracion de variables
         loc1_1 loc1_2 loc1_3 loc1_4 loc1_5 loc2_1 loc2_2 loc2_3 loc2_4 loc2_5 loc3_1 loc3_2 loc3_3 loc3_4 loc3_5 loc4_1 loc4_2 loc4_3 loc4_4 loc4_5 loc5_1 loc5_2 loc5_3 loc5_4 loc5_5 - Localizaciones
         
         mando1 - Edificios
@@ -11,20 +12,25 @@
         
         barracon1 - Edificios
     )
+
     (:init
-        (edificioTipo mando1 CentroDeMando)
+        ; Tipos de cada una de las unidades 
         (unidadTipo vce1 VCE)
         (unidadTipo vce2 VCE)
         (unidadTipo vce3 VCE)
 
+        ; Tipos de cada una de las localizaciones
         (localizacionTipo mineral1 Mineral)
         (localizacionTipo mineral2 Mineral)
         (localizacionTipo mineral3 Mineral)
         (localizacionTipo gas1 Gas)
         (localizacionTipo gas2 Gas)
 
+        ; Tipos de cada una de las unidades
+        (edificioTipo mando1 CentroDeMando)
         (edificioTipo barracon1 Barracones)
 
+        ; Declaracion del grid
         (existeCamino loc1_1 loc2_1)
         (existeCamino loc2_1 loc1_1)
         (existeCamino loc1_1 loc1_2)
@@ -186,6 +192,7 @@
         (existeCamino loc5_5 loc5_4)
         (existeCamino loc5_4 loc5_5)
 
+        ; Situacion inicial de los edificios, unidades y recursos
         (edificioEn mando1 loc2_2)
         (unidadEn vce1 loc2_2)
         (unidadEn vce2 loc2_2)
