@@ -208,7 +208,8 @@
         (asignadoRecursoEn Gas loc3_5)
 
         (necesita CentroDeMando Gas)
-        (necesita Barracones Mineral)
+        ; (necesita Barracones Mineral)
+        (necesita Barracones Gas)
         (necesita Extractor Mineral)
     )
     (:goal

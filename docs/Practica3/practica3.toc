@@ -2,6 +2,6 @@
 \contentsline {section}{Ejercicio 1}{1}{section*.3}% 
 \contentsline {section}{Ejercicio 2}{2}{section*.4}% 
 \contentsline {section}{Ejercicio 3}{2}{section*.5}% 
-\contentsline {section}{Ejercicio 4}{2}{section*.6}% 
-\contentsline {section}{Ejercicio 5}{2}{section*.7}% 
-\contentsline {section}{Ejercicio 6}{2}{section*.8}% 
+\contentsline {section}{Ejercicio 4}{3}{section*.6}% 
+\contentsline {section}{Ejercicio 5}{3}{section*.7}% 
+\contentsline {section}{Ejercicio 6}{3}{section*.8}% 

@@ -195,7 +195,7 @@
         (existeCamino loc5_4 loc5_5)
 
         ; Situacion inicial de los edificios, unidades y recursos
-        (edificioEn mando1 loc2_2)
+        ; (edificioEn mando1 loc2_2)
         (unidadEn vce1 loc2_2)
         (unidadEn vce2 loc2_2)
         (unidadEn vce3 loc2_2)
@@ -213,6 +213,9 @@
         (necesita Extractor Mineral)
     )
     (:goal
-        (edificioEn barracon1 loc2_3)
+        (and
+            (edificioEn mando1 loc2_3)
+            (edificioEn barracon1 loc2_3)
+        )
     )
 )

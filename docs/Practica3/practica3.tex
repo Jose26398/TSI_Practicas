@@ -156,10 +156,24 @@ Para ello, tenemos que añadir una precondición más para comprobar el recurso 
 utilizado un efecto condicional para que se asigne al recurso, bien si en la precondición no era un recurso de gas, o bien, si
 era un recurso de gas pero tiene un extractor construido.
 
+El ejercicio nos pide construir un barracón, el cual no necesita gas, asi que para probarlo he puesto que en vez de minerales
+necesite estar extrayendo gas.
+
 
 \section*{Ejercicio 3}
 \addcontentsline{toc}{section}{Ejercicio 3}
+Tal y como habíamos definido la acción de \textbf{Construir} en los ejercicios anterior, nos damos cuenta de que con un único VCE
+asignado a un recurso era suficiente para que lo construyese. Eso es lo que vamos a solucionar ahora, es decir, vamos a tener en
+cuenta que un edificio puede requerir de más de un tipo de recurso.
 
+Hemos añadido el predicado '\textit{generando ?recurso}', que se añade cuando un VCE se asigna en uno. Con esto podemos controlar
+más fácilmente los recursos que se están generando o no. Después, en la propia acción de construir, en vez de comprobar si hay
+alguien extrayendo o no, hemos utilizado el predicado '\textit{forall}' para recorrer todos los recursos existentes y comprobar
+si el edificio a construir no lo necesita, o si lo necesita pero se está generando.
+
+Por ahora, no vamos a necesitar ninguna función que elimine los predicados de generar ya que tampoco hay ninguna que desasigne a
+las unidades de la extracción de recursos. Para comprobar que funciona, he puesto que también se construya el centro de mando, ya
+que es el único que necesita de todos los recursos.
 
 
 

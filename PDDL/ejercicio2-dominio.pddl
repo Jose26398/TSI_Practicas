@@ -73,7 +73,7 @@
                         (and (edificioEn ?ext ?loc)     ; o si hay un Extractor en la localizacion
                         (edificioTipo ?ext Extractor))
                     )
-                    (and (extrayendoEn ?vce ?loc)   ; entonces asigna al VCE en la localizacion del recurso
+                    (and (extrayendoEn ?vce ?loc))      ; entonces asigna al VCE en la localizacion del recurso
                 )
             )
     )
