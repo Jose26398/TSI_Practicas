@@ -132,7 +132,7 @@ cómo y por qué están declaradas. En cuanto a las acciones si las vamos a expl
 \begin{itemize}
     \item \textbf{Navegar.} Mueve una unidad entre una localización y otra. Para ello, primero comprueba si la localización en la
           que se encuentra está conectada con la localización a la que va; y despues se asegura que la unidad no estaba extrayendo
-          ningún recurso. Si esto se cumple, añade la unidad a la nueva localización y la elimina de la anterior
+          ningún recurso. Si esto se cumple, añade la unidad a la nueva localización y la elimina de la anterior.
     \item \textbf{Asignar.} Pone a un VCE a extraer recursos de un nodo. Si una unidad del tipo VCE se encuentra en la posición
           del recurso a extraer y no lo estaba extrayendo previamente, comienza a extraerlo.
     \item \textbf{Construir.} Ordena a un trabajador libre que construya un edificio. Al igual que antes, este trabajador tiene
@@ -147,13 +147,20 @@ como los minerales. Como el mundo está representado en forma de cuadrícula, ta
 (en mi caso la hice gracias a la herramienta del editor online).
 
 
-
 \section*{Ejercicio 2}
 \addcontentsline{toc}{section}{Ejercicio 2}
+En este ejercicio tenemos que modificar la acción \textit{Asignar} para que en un recurso de gas haya que construir un \textbf{
+Extractor} antes de asignarlo.
+
+Para ello, tenemos que añadir una precondición más para comprobar el recurso asignado en la localización. Una vez hecho esto, he
+utilizado un efecto condicional para que se asigne al recurso, bien si en la precondición no era un recurso de gas, o bien, si
+era un recurso de gas pero tiene un extractor construido.
 
 
 \section*{Ejercicio 3}
 \addcontentsline{toc}{section}{Ejercicio 3}
+
+
 
 
 \section*{Ejercicio 4}

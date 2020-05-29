@@ -29,7 +29,6 @@
 
         ; Indicar si un VCE esta extrayendo un recurso
         (extrayendoEn ?vce - Unidades ?loc - Localizaciones)
-        (generando ?rec - tipoLocalizaciones)
 
         ; Recursos que necesita un edificio para ser construido
         (necesita ?edi - tipoEdificios ?rec - tipoLocalizaciones)
@@ -75,7 +74,6 @@
                         (edificioTipo ?ext Extractor))
                     )
                     (and (extrayendoEn ?vce ?loc)   ; entonces asigna al VCE en la localizacion del recurso
-                    (generando ?rec))               ; aniadimos que se esta generando el recurso
                 )
             )
     )
