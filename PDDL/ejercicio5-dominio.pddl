@@ -66,7 +66,7 @@
     ; ASIGNAR. Pone a un VCE a extrear recursos de un nodo
     ; ----------------------------------------------------------------------------- ;
     (:action Asignar
-        :parameters (?vce - Unidades ?loc - Localizaciones ?rec - tipoLocalizaciones ?ext - Edificios)
+        :parameters (?vce - Unidades ?loc - Localizaciones ?rec - tipoLocalizaciones)
         :precondition 
             (and
                 (unidadTipo ?vce VCE)           ; la unidad tiene que ser un VCE
@@ -79,16 +79,17 @@
         :effect 
             (and
                 (when (or
-                        (not (= ?rec Gas))              ; si no es un nodo de Gas
-                        (and (edificioEn ?ext ?loc)     ; o si hay un Extractor en la localizacion
-                        (edificioTipo ?ext Extractor))
+                        (not (= ?rec Gas))                  ; si no es un nodo de Gas
+                        (exists (?ext - Edificios)          ; o si existe
+                            (and (edificioEn ?ext ?loc)     ; un Extractor en la localizacion
+                            (edificioTipo ?ext Extractor))
+                        )
                     )
                     (and (extrayendoEn ?vce ?loc)   ; entonces asigna al VCE en la localizacion del recurso
                     (generando ?rec))               ; aniadimos que se esta generando el recurso
                 )
             )
     )
-
 
     ; ----------------------------------------------------------------------------- ;
     ; CONSTRUIR. Ordena a un trabajador libre que construya un edificio
@@ -100,9 +101,11 @@
                 (unidadTipo ?vce VCE)           ; la unidad tiene que ser un VCE
                 (unidadEn ?vce ?loc)            ; la unidad tiene que estar en la localizacion requerida
                 (not (extrayendoEn ?vce ?loc))  ; no puede estar ocupada extrayendo
-                (not (exists (?otraLoc - Localizaciones) (edificioEn ?edi ?loc)) )  ; y no puede existir un edificio en
+
+                (not (exists (?otraLoc - Localizaciones) (edificioEn ?edi ?otraLoc)) )  ; el edificio no puede estar ya construido
+                
+                (not (exists (?otroEd - Edificios)(edificioEn ?otroEd ?loc)) )      ; y no puede existir un edificio en
                                                                                     ; esa localizacion previamente
-                (not (exists (?otroEd - Edificios)(edificioEn ?otroEd ?loc)) )
 
                 ; El tipo de edificio tiene que cumplir que
                 (exists

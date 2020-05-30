@@ -214,7 +214,7 @@
     )
     (:goal
         (and
-            (edificioEn mando1 loc2_3)
+            (edificioEn mando1 loc2_2)
             (edificioEn barracon1 loc2_3)
         )
     )

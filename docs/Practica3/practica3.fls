@@ -92,6 +92,8 @@ INPUT C:\Program Files\MiKTeX 2.9\tex\latex\graphics-cfg\color.cfg
 INPUT C:\Program Files\MiKTeX 2.9\tex\latex\graphics-cfg\color.cfg
 INPUT C:\Program Files\MiKTeX 2.9\tex\latex\listings\lstlang1.sty
 INPUT C:\Program Files\MiKTeX 2.9\tex\latex\listings\lstlang1.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\listings\lstlang2.sty
+INPUT C:\Program Files\MiKTeX 2.9\tex\latex\listings\lstlang2.sty
 INPUT c:\Users\Jose\Universidad\TSI (Técnicas de los Sistemas Inteligentes)\TSI_Practicas\docs\Practica3\practica3.aux
 INPUT c:\Users\Jose\Universidad\TSI (Técnicas de los Sistemas Inteligentes)\TSI_Practicas\docs\Practica3\practica3.aux
 OUTPUT c:\Users\Jose\Universidad\TSI (Técnicas de los Sistemas Inteligentes)\TSI_Practicas\docs\Practica3\practica3.aux
@@ -109,10 +111,10 @@ INPUT c:\Users\Jose\Universidad\TSI (Técnicas de los Sistemas Inteligentes)\TSI
 INPUT c:\Users\Jose\Universidad\TSI (Técnicas de los Sistemas Inteligentes)\TSI_Practicas\docs\Practica3\practica3.out
 INPUT c:\Users\Jose\Universidad\TSI (Técnicas de los Sistemas Inteligentes)\TSI_Practicas\docs\Practica3\practica3.out
 INPUT c:\Users\Jose\Universidad\TSI (Técnicas de los Sistemas Inteligentes)\TSI_Practicas\docs\Practica3\practica3.out
-OUTPUT c:\Users\Jose\Universidad\TSI (Técnicas de los Sistemas Inteligentes)\TSI_Practicas\docs\Practica3\practica3.pdf
 INPUT c:\Users\Jose\Universidad\TSI (Técnicas de los Sistemas Inteligentes)\TSI_Practicas\docs\Practica3\practica3.out
 INPUT c:\Users\Jose\Universidad\TSI (Técnicas de los Sistemas Inteligentes)\TSI_Practicas\docs\Practica3\practica3.out
 OUTPUT c:\Users\Jose\Universidad\TSI (Técnicas de los Sistemas Inteligentes)\TSI_Practicas\docs\Practica3\practica3.out
+OUTPUT c:\Users\Jose\Universidad\TSI (Técnicas de los Sistemas Inteligentes)\TSI_Practicas\docs\Practica3\practica3.pdf
 INPUT c:\Users\Jose\Universidad\TSI (Técnicas de los Sistemas Inteligentes)\TSI_Practicas\docs\Practica3\img\ugr.png
 INPUT c:\Users\Jose\Universidad\TSI (Técnicas de los Sistemas Inteligentes)\TSI_Practicas\docs\Practica3\img\ugr.png
 INPUT c:\Users\Jose\Universidad\TSI (Técnicas de los Sistemas Inteligentes)\TSI_Practicas\docs\Practica3\img\ugr.png
@@ -142,15 +144,25 @@ INPUT C:\Users\Jose\AppData\Local\MiKTeX\2.9\pdftex\config\pdftex.map
 INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\jknappen\ec\ecrm1440.tfm
 INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\jknappen\ec\ecbx1440.tfm
 INPUT c:\Users\Jose\Universidad\TSI (Técnicas de los Sistemas Inteligentes)\TSI_Practicas\docs\Practica3\practica3.toc
-INPUT c:\Users\Jose\Universidad\TSI (Técnicas de los Sistemas Inteligentes)\TSI_Practicas\docs\Practica3\practica3.toc
 OUTPUT c:\Users\Jose\Universidad\TSI (Técnicas de los Sistemas Inteligentes)\TSI_Practicas\docs\Practica3\practica3.toc
 INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\jknappen\ec\ecti1095.tfm
 INPUT C:\Program Files\MiKTeX 2.9\tex\latex\base\t1cmtt.fd
 INPUT C:\Program Files\MiKTeX 2.9\tex\latex\base\t1cmtt.fd
 INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\jknappen\ec\ectt1095.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\jknappen\ec\ecrm0900.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\jknappen\ec\ecrm0600.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\cm\cmr9.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\cm\cmmi9.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\cm\cmsy9.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\amsfonts\cmextra\cmex9.tfm
+INPUT C:\Program Files\MiKTeX 2.9\fonts\tfm\public\amsfonts\cmextra\cmex7.tfm
 INPUT c:\Users\Jose\Universidad\TSI (Técnicas de los Sistemas Inteligentes)\TSI_Practicas\docs\Practica3\practica3.aux
 INPUT c:\Users\Jose\Universidad\TSI (Técnicas de los Sistemas Inteligentes)\TSI_Practicas\docs\Practica3\practica3.out
 INPUT c:\Users\Jose\Universidad\TSI (Técnicas de los Sistemas Inteligentes)\TSI_Practicas\docs\Practica3\practica3.out
+INPUT C:\Users\Jose\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecrm0900.pk
+INPUT C:\Users\Jose\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecrm0900.pk
+INPUT C:\Users\Jose\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecrm0600.pk
+INPUT C:\Users\Jose\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecrm0600.pk
 INPUT C:\Users\Jose\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ectt1095.pk
 INPUT C:\Users\Jose\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ectt1095.pk
 INPUT C:\Users\Jose\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecti1095.pk
@@ -167,3 +179,5 @@ INPUT C:\Users\Jose\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\
 INPUT C:\Users\Jose\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\eccc1095.pk
 INPUT C:\Users\Jose\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\eccc1440.pk
 INPUT C:\Users\Jose\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\eccc1440.pk
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\amsfonts\cm\cmsy9.pfb
+INPUT C:\Program Files\MiKTeX 2.9\fonts\type1\public\amsfonts\cm\cmsy9.pfb

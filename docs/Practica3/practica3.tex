@@ -38,7 +38,7 @@
     tabsize=2
 }
  
-\lstset{style=mystyle, language=Java}
+\lstset{style=mystyle, language=Lisp}
 
 % Comando para poner el nombre de la asignatura
 \newcommand{\asignatura}{Técnicas de los Sistemas Inteligentes}
@@ -176,17 +176,140 @@ las unidades de la extracción de recursos. Para comprobar que funciona, he pues
 que es el único que necesita de todos los recursos.
 
 
-
 \section*{Ejercicio 4}
 \addcontentsline{toc}{section}{Ejercicio 4}
+En este ejercicio vamos a añadir un par de unidades nuevas a nuestro dominio. Estas son el \textbf{Marine} y el \textbf{Segador},
+cada uno con sus requerimientos propios y ambos producidos en un \textit{Barracon}. También se cambiará el número de VCEs inicial
+a uno, y los nuevos se generarán en un \textit{Centro de Mando}.
+
+Las dos unidades las añadiremos como constantes, al igual que los VCE. También añadiremos un predicado para saber que recursos
+necesita cada unidad para ser creada (similar a la del ejercicio anterior con los edificios), y otro para saber en que edificio
+es entrenada cada unidad.
+
+Para generar las distintas unidades, hemos creado la acción \textbf{Reclutar}. Esta acción primero comprueba el tipo de unidad a
+reclutar, en qué edificio se entrena y que no haya sido previamente reclutada. Posteriormente, con un predicado \textit{exists}
+hay que buscar el edificio que la entrena, es decir, si está construido; y si lo ha encontrado, comprobar que se están generando
+todos los recursos necesarios (al igual que hicimos en la acción de construir).
+
+El objetivo de este ejercicio es poner un marine en una localización y, otro marine y un segador en otra; asi que podremos ver
+perfectamente el funcionamiento de los nuevos cambios.
 
 
 \section*{Ejercicio 5}
 \addcontentsline{toc}{section}{Ejercicio 5}
+En este ejercicio tendremos que crear una nueva acción \textbf{Investigar}, la cual nos permitirá desbloquear nuevas unidades que
+reclutar. Para realizar estas investigaciones necesitaremos un nuevo edificio llamado '\textit{Bahía de Ingeniería}' y los
+recursos necesarios para llevar la investigación a cabo.
+
+En el dominio hemos añadido el edificio a las constantes, un nuevo predicado para saber que recurso necesita una unidad para ser
+investigada, y otro predicado que nos indica si ya está investigada o no. En cuanto a las acciones tenemos:
+
+\begin{itemize}
+    \item En la acción de \texttt{Reclutar} simplemente hemos puesto la precondición de que la unidad esté investigada.
+    \item  Para la nueva acción de \texttt{Investigar}, tenemos que comprobar que la unidad no ha sido investigada previamente, que
+           \textit{exists} un edificio en alguna localización del tipo BahíaDeIngeniería, y al igual antes, o que no necesite un
+           recurso, o que lo necesite pero lo esté generando.
+\end{itemize}
+
+En cuanto al fichero problema, declaramos una nueva variable para la bahía, los recursos que necesita cada unidad, y, en mi caso,
+he puesto las unidades VCE y marine como ya investigadas (ya que según el enunciado disponemos de ellas desde un principio). El
+objetivo será el mismo que en el ejercicio anterior.
 
 
 \section*{Ejercicio 6}
 \addcontentsline{toc}{section}{Ejercicio 6}
+Hasta ahora, con tener asignada una unidad a un recurso nos bastaba para tener una cantidad ilimitada del mismo, pero en este
+ejercicio se nos pedirá que cambiemos esto. Cada edificio, unidad o investigación costará una cantidad determinada de recursos,
+y además, tendremos que añadir nuevas acciones para poder llevarlo a cabo: recolectar y desasignar.
+
+Por otro lado, también hemos ''reducido'' la cantidad de predicados (realmente hay más, pero por temas de optimización que
+después explicaré), ya que nos deshacemos de los '\textit{generando ?recurso}' y de los que indican qué recurso se necesita
+para construir, reclutar o investigar. Esto se debe a que ahora sólo comprobamos los recursos que tenemos almacenados.
+
+Para \textbf{almacenar recursos} hemos creado las siguientes funciones:
+\begin{lstlisting}
+    (:functions 
+        (recursoAlmacenado ?rec - tipoLocalizaciones)
+        (capacidadMaxima)
+    )
+\end{lstlisting}
+
+Además de las dos nuevas acciones, también modificamos las anteriores para consumir un cierto número de recursos. Vamos a
+explicarlas todas a continuación:
+\begin{itemize}
+    \item La nueva acción \textbf{Recolectar}, por cada trabajador asignado a un nodo, incrementará en 20 el recurso (para
+          hacerlo en un tiempo razonable). Esta acción se puede ejecutar en cualquier momento, ya que sólo va a tener la condición
+          de no sobrepasar la capacidad máxima del almacenamiento. En el \textit{effect} tenemos que poner un \texttt{forall} para
+          que incremente por cada trabajador asignado.
+
+    \item La otra acción \textbf{Desasignar}, como su propio nombre indica, hacemos que un VCE deje de extraer un recurso en un
+          nodo. Para que se puede ejecutar, simplemente tiene que haber un VCE extrayendo un recurso en una localización
+          determinada.
+
+    \item Hay que modificar la acción \textbf{Construir}. Las precondiciones serán las mismas que teníamos antes, sin embargo,
+          los efectos cambian totalmente. Primero, con un \texttt{when}, vemos que edificio se está construyendo y si tenemos
+          materiales suficientes para hacerlo, y dependiendo de cuál sea, decrementamos la cantidad de recursos correspondiente.
+          Esto lo haremos con la función \texttt{(decrease (recursoAlmacenado ?recurso) ?valor)}. También añadiremos el predicado
+          que indica la unidad que se puede reclutar en este edificio.
+
+          En caso de construir el \textbf{Depósito}, tendremos que incrementar la capacidad máxima de almacenamiento en 100, y
+          en caso de construir la \texttt{Bahía de Ingeniería}, habilitamos las investigaciones.
+
+    \item Con la acción \textbf{Reclutar} tenemos una situación similar a la anterior, ya que dependiendo de la unidad que
+          reclutemos tenemos que decrementar una cantidad de recursos u otra, comprobando previamente si disponemos de los
+          recursos.
+
+    \item En la acción \textbf{Investigar} también nos sucede igual que las dos anteriores, decrementando los recursos que se
+          requieren para investigar la unidad.
+\end{itemize}
+
+Tras implementar todo esto, incrementando el código del ejercicio anterior, me he dado cuenta que la ejecución tardaba demasiado.
+La solución que obtenía era correcta, por lo que decidí que había que optimizar el código. Esto lo he hecho eliminando el máximo
+de bucle posibles, es decir, todos los \textit{exists} y todos los \textit{forall} posibles. Pese a esto, el código se sigue
+manteniendo igual que antes, pero en vez de tener una precondición o efectos más complejos, tiene más predicados.
+
+Por ejemplo: previamente en la acción \texttt{Construir} teníamos los siguiente:
+\begin{lstlisting}
+; el edificio no puede estar ya construido
+(not (exists (?otraLoc - Localizaciones) (edificioEn ?edi ?otraLoc)) )
+
+; y no puede existir un edificio en esa localizacion previamente
+(not (exists (?otroEd - Edificios)(edificioEn ?otroEd ?loc)) )
+\end{lstlisting}
+
+Si añadimos los siguientes predicados nos evitamos esas dos búsquedas:
+\begin{lstlisting}
+(not (hayEdificio ?loc))        ; no puede haber un edificio en esa localizacion
+(not (construido ?edi))         ; el edificio a construir no puede estar ya construido
+\end{lstlisting}
+
+Estos predicados también tendrán que ser añadidos en la propia acción de construir, en este caso. Al igual que estos, he creado
+cuatro predicados más:
+\begin{lstlisting}
+; Unidades que han sido reclutadas
+(reclutada ?uni - Unidades)
+
+; Unidades que puede reclutar un tipo de edificio
+(puedeReclutarEn ?tipoU - tipoUnidades ?loc - Localizaciones)
+
+; Recurso que esta extrayendo un VCE determinado
+(extrayendoRecurso ?vce - Unidades ?rec - tipoLocalizaciones)
+
+; Indica si hay una bahia de ingenieria disponible para investigar
+(investigaciondisponible)
+\end{lstlisting}
+
+Los cambios que hacen estos predicados son como los explicados en el ejemplo, por eso no los voy a mostrar uno a uno. La esencia
+del código sigue siendo la misma y las precondiciones también, solo que expresadas de otra forma. Pese a esto, el código tardaba
+bastante tiempo, por lo que decidí cambiar la cantidad de recursos recolectados al doble (de 10 a 20 por unidad asignada), y
+con esto el plan lo encuentra en menos de 2 segundos.
+
+Por último, en el fichero problema hemos tenido que añadir los variables correspondientes al ejercicio, como el depósito; añadir
+los predicados necesarios, como el almacenamiento de los recursos y su capacidad máxima (inicializados en 0 y 100 respectivamente);
+y eliminar los que sobraban, como los que indican que recurso necesita cada unidad para crearse.
+
+También han sido añadidos los correspondientes a los predicados para optimizar. En cuanto al objetivo del problema, será el mismo
+que en el ejercicio anterior.
 
 
 \end{document}
